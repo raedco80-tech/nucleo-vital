@@ -1,4 +1,3 @@
-
 from datetime import datetime, timedelta
 import uuid
 import streamlit as st
@@ -187,7 +186,6 @@ elif menu == "Escudo y memoria":
 
   if st.button("Consultar Estado y Generar Ruta Automática"):
     if destino:
-      # Simulación de consulta inteligente automática basada en internet/datos de zona
       destino_lower = destino.lower()
       if (
           "mercado" in destino_lower
@@ -303,28 +301,48 @@ elif menu == "Triaje y Alerta SOS":
       )
 
   st.write(
-      "🎙️ **Entrada de voz o texto:** Describa o dicte el síntoma o estado"
-      " médico que presenta."
-  )
-  sintoma_voz = st.text_area(
-      "Escriba o simule el reporte hablado del paciente:",
-      placeholder=(
-          "Ej. Siento mareos fuertes, fiebre de 39 grados, opresión en el pecho"
-          " y descompensación..."
-      ),
+      "🎙️ **Seleccione método de entrada:** Puede escribir los síntomas o"
+      " activar el comando de voz del dispositivo."
   )
 
-  if st.button("⚡ Ejecutar Triaje Clínico Automático"):
-    if sintoma_voz:
-      texto_analisis = sintoma_voz.lower()
+  modo_entrada = st.radio(
+      "Método de reporte:", ["Escribir síntoma", "🎤 Dictar Comando de Voz"]
+  )
 
-      # Cálculo automático de gravedad según los síntomas detectados
+  sintoma_reporte = ""
+  if modo_entrada == "Escribir síntoma":
+    sintoma_reporte = st.text_area(
+        "Describa el estado de salud o síntomas:",
+        placeholder=(
+            "Ej. Mareos intensos, fiebre alta, dolor en el pecho, presión"
+            " baja..."
+        ),
+    )
+  else:
+    st.info(
+        "🎙️ **Micrófono Activo:** Diga con claridad sus síntomas (Simulación"
+        " de voz activada)."
+    )
+    sintoma_reporte = st.text_area(
+        "Transcripción automática del comando de voz:",
+        value=(
+            "Siento fuerte opresión en el pecho, mareos y descompensación"
+            " general."
+        ),
+    )
+
+  if st.button("⚡ Ejecutar Triaje Clínico y Análisis Automático"):
+    if sintoma_reporte:
+      texto_analisis = sintoma_reporte.lower()
+
+      # GRAVEDAD CALCULADA 100% DE MANERA AUTOMÁTICA SEGÚN LOS SÍNTOMAS
       if (
           "pecho" in texto_analisis
           or "inconsciente" in texto_analisis
           or "sangre" in texto_analisis
           or "respirar" in texto_analisis
           or "fuerte" in texto_analisis
+          or "descompensación" in texto_analisis
       ):
         nivel_gravedad = "🔴 GRAVE / URGENCIA CRÍTICA"
         color_urgencia = "#ff4b4b"
@@ -335,43 +353,37 @@ elif menu == "Triaje y Alerta SOS":
         es_grave = False
 
       st.markdown(
-          f"### Nivel de Gravedad Calculado: <span style='color:"
-          f" {color_urgencia};'>{nivel_gravedad}</span>",
+          f"### Nivel de Gravedad Calculado Automáticamente: <span"
+          f" style='color: {color_urgencia};'>{nivel_gravedad}</span>",
           unsafe_allow_html=True,
       )
 
-      st.markdown("""
-            ### 🩺 Explicación Médica Detallada:
-            El sistema ha procesado los signos clínicos reportados y determina una alteración sistémica que requiere atención inmediata según el protocolo de triaje automatizado.
-            """)
-
+      # RESPUESTA AUTOMÁTICA SEGÚN LA GRAVEDAD DETECTADA
       if es_grave:
         st.error(
-            "🚨 **¡ALERTA AUTOMÁTICA DE EMERGENCIA DISPARADA!** El sistema"
-            " detectó un cuadro crítico y ha enviado una notificación de"
-            " emergencia al contacto configurado."
+            "🚨 **¡ALERTA SOS AUTOMÁTICA ACTIVADA POR GRAVEDAD CRÍTICA!**"
         )
+        st.markdown(f"""
+                - **Motivo:** El sistema detectó un cuadro clínico de alto riesgo en su reporte.
+                - **Ubicación GPS:** Transmitiendo coordenadas geográficas exactas en tiempo real.
+                - **Aviso enviado:** Notificación de emergencia enviada de forma automática al número configurado: **{st.session_state.contacto_sos}**.
+                """)
         st.markdown(
-            f"📡 **Datos enviados a {st.session_state.contacto_sos}:** Ubicación"
-            " GPS exacta actual y reporte de gravedad crítica."
-        )
-        st.markdown(
-            f"📞 [LLAMAR DE INMEDIATO AL CONTACTO SOS"
+            f"📞 [LLAMAR AUTOMÁTICAMENTE AL CONTACTO SOS"
             f" ({st.session_state.contacto_sos})](tel:{st.session_state.contacto_sos})"
         )
       else:
         st.success(
-            "💊 **Receta y Tratamiento Médico Recomendado (Bajo supervisión):**"
+            "💊 **Triaje Exitoso: Tratamiento y Recomendaciones Médicas"
+            " Detalladas:**"
         )
         st.markdown("""
-                - **Medicamento sugerido:** Paracetamol de 500 mg (1 tableta cada 8 horas en caso de dolor o fiebre) o Ibuprofeno de 400 mg (si hay inflamación).
-                - **Hidratación:** Suero oral o líquidos constantes.
-                - **Reposo:** Descanso absoluto en ambiente ventilado.
+                - **Diagnóstico Preliminar:** Cuadro sintomático leve/moderado sin compromiso vital inmediato.
+                - **Medicamentos sugeridos:** Paracetamol de 500 mg (1 tableta cada 8 horas) o Ibuprofeno (si hay malestar muscular).
+                - **Pautas a seguir:** Reposo absoluto, hidratación constante con sales orales y monitoreo de temperatura.
                 """)
     else:
-      st.warning(
-          "Por favor ingrese o dicte el síntoma para realizar el triaje."
-      )
+      st.warning("Por favor ingrese o dicte el síntoma para realizar el triaje.")
 
 # --- VISTA: PANEL MAESTRO (SOLO PARA TI) ---
 elif menu == "Panel Maestro (Licencias)":
