@@ -74,7 +74,7 @@ def verificar_acceso(token, dispositivo):
     return False, "❌ Clave de acceso inválida o no autorizada."
 
 
-# --- CONTROL ESTRICTO DE AUTENTICACIÓN ---
+# --- CONTROL DE SESIÓN ---
 if "autenticado" not in st.session_state:
   st.session_state.autenticado = False
   st.session_state.tipo_usuario = None
@@ -88,9 +88,8 @@ if token_guardado and not st.session_state.autenticado:
     st.session_state.tipo_usuario = tipo
   else:
     st.query_params.pop("token", None)
-    st.session_state.autenticado = False
 
-# --- PANTALLA DE BLOQUEO / LOGIN (OBLIGATORIA SI NO ESTÁ AUTENTICADO) ---
+# --- PANTALLA DE LOGIN OBLIGATORIA ---
 if not st.session_state.autenticado:
   st.markdown(
       "<h1 style='text-align: center; color: #ff4b4b;'>🛡️ NÚCLEO VITAL</h1>",
@@ -121,9 +120,13 @@ if not st.session_state.autenticado:
       else:
         st.error(mensaje)
 
+  # DETENEMOS LA EJECUCIÓN AQUÍ PARA QUE NADA MÁS SE VAYA A MOSTRAR EN PANTALLA
   st.stop()
 
-# --- APLICACIÓN PRINCIPAL ---
+# ==========================================
+# APLICACIÓN PRINCIPAL (SOLO SE CARGA SI ESTÁ AUTENTICADO)
+# ==========================================
+
 st.sidebar.title("⚡ Navegación Táctica")
 
 if st.session_state.tipo_usuario == "MASTER":
