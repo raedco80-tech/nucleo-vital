@@ -167,13 +167,24 @@ if menu == "Centro de Mando":
       " acceder a las funciones avanzadas."
   )
 
-# --- VISTA: ESCUDO Y MEMORIA (CON SEMÁFOROS VISUALES RESTAURADOS) ---
+# --- VISTA: ESCUDO Y MEMORIA (CON LEYENDA Y SEMÁFOROS VISUALES RESTAURADOS) ---
 elif menu == "Escudo y memoria":
   st.title("🛡️ Escudo y Memoria")
   st.markdown(
       "Monitoreo de rutas, semáforos de peligrosidad y registro de incidentes"
       " en tiempo real."
   )
+
+  # Leyenda visual de colores tal como lo tenías
+  st.markdown(
+      "**Leyenda de Semáforos de Peligrosidad:** 🟩 <span"
+      " style='color: #238636; font-weight: bold;'>Zona Segura</span> | 🟨"
+      " <span style='color: #f0ad4e; font-weight: bold;'>Zona de"
+      " Precaución</span> | 🟥 <span style='color: #ff4b4b; font-weight:"
+      " bold;'>Zona de Peligro / Alto Riesgo</span>",
+      unsafe_allow_html=True,
+  )
+  st.write("---")
 
   destino = st.text_input(
       "Ingrese su lugar de destino a transitar:",
@@ -213,14 +224,14 @@ elif menu == "Escudo y memoria":
             " normal."
         )
 
-      # SEMÁFORO VISUAL DESTACADO
+      # Semáforo visual destacado según el resultado
       st.markdown(
-          f"### Semáforo de Peligrosidad Actual: <span style='color:"
-          f" {color_html}; font-size: 26px; font-weight: bold;'>●"
+          f"### Resultado del Semáforo en Ruta: <span style='color:"
+          f" {color_html}; font-size: 24px; font-weight: bold;'>●"
           f" {semaforo}</span>",
           unsafe_allow_html=True,
       )
-      st.info(f"📊 **Análisis en vivo:** {recomendacion}")
+      st.info(f"📊 **Detalles y análisis en vivo:** {recomendacion}")
 
       if incidente_camino:
         st.warning(
