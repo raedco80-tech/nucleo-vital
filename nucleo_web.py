@@ -74,22 +74,23 @@ def verificar_acceso(token, dispositivo):
     return False, "❌ Clave de acceso inválida o no autorizada."
 
 
-# --- PERSISTENCIA AUTOMÁTICA EN EL DISPOSITIVO ---
-token_guardado = st.query_params.get("token", None)
-
+# --- CONTROL ESTRICTO DE AUTENTICACIÓN ---
 if "autenticado" not in st.session_state:
   st.session_state.autenticado = False
   st.session_state.tipo_usuario = None
 
-  if token_guardado:
-    valido, tipo = verificar_acceso(token_guardado, dispositivo_actual)
-    if valido:
-      st.session_state.autenticado = True
-      st.session_state.tipo_usuario = tipo
-    else:
-      st.query_params.pop("token", None)
+token_guardado = st.query_params.get("token", None)
 
-# --- PANTALLA DE BLOQUEO / LOGIN ---
+if token_guardado and not st.session_state.autenticado:
+  valido, tipo = verificar_acceso(token_guardado, dispositivo_actual)
+  if valido:
+    st.session_state.autenticado = True
+    st.session_state.tipo_usuario = tipo
+  else:
+    st.query_params.pop("token", None)
+    st.session_state.autenticado = False
+
+# --- PANTALLA DE BLOQUEO / LOGIN (OBLIGATORIA SI NO ESTÁ AUTENTICADO) ---
 if not st.session_state.autenticado:
   st.markdown(
       "<h1 style='text-align: center; color: #ff4b4b;'>🛡️ NÚCLEO VITAL</h1>",
@@ -105,7 +106,7 @@ if not st.session_state.autenticado:
   col1, col2, col3 = st.columns([1, 2, 1])
   with col2:
     st.info(
-        "Ingrese su llave de autorización. Quedará vinculada de forma única a"
+        "Acceso restringido. Ingrese su llave de autorización para vincular"
         " este dispositivo."
     )
     token_ingresado = st.text_input("🔑 Llave de Acceso", type="password")
@@ -167,7 +168,7 @@ if menu == "Centro de Mando":
       " acceder a las funciones avanzadas."
   )
 
-# --- VISTA: ESCUDO Y MEMORIA (CON LEYENDA Y SEMÁFOROS VISUALES RESTAURADOS) ---
+# --- VISTA: ESCUDO Y MEMORIA ---
 elif menu == "Escudo y memoria":
   st.title("🛡️ Escudo y Memoria")
   st.markdown(
@@ -175,7 +176,6 @@ elif menu == "Escudo y memoria":
       " en tiempo real."
   )
 
-  # Leyenda visual de colores tal como lo tenías
   st.markdown(
       "**Leyenda de Semáforos de Peligrosidad:** 🟩 <span"
       " style='color: #238636; font-weight: bold;'>Zona Segura</span> | 🟨"
@@ -224,7 +224,6 @@ elif menu == "Escudo y memoria":
             " normal."
         )
 
-      # Semáforo visual destacado según el resultado
       st.markdown(
           f"### Resultado del Semáforo en Ruta: <span style='color:"
           f" {color_html}; font-size: 24px; font-weight: bold;'>●"
