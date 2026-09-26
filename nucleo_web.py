@@ -1,167 +1,169 @@
+import streamlit as datetime, hashlib
+from datetime import datetime, timedelta
 import streamlit as st
-import datetime
-import urllib.parse
-import json
-import os
 
-# --- CONFIGURACIÓN DE LA PÁGINA ---
-st.set_page_config(page_title="Núcleo Vital - Centro de Mando", page_icon="⚡", layout="centered")
-
-ARCHIVO_HISTORIAL = "historial_zonas.json"
-ARCHIVO_PERFIL = "perfil_usuario.json"
-
-# --- FUNCIONES DE CARGA Y GUARDADO ---
-def cargar_json(archivo, default_data):
-    if os.path.exists(archivo):
-        try:
-            with open(archivo, "r", encoding="utf-8") as f:
-                return json.load(f)
-        except:
-            return default_data
-    return default_data
-
-def guardar_json(archivo, data):
-    with open(archivo, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
-
-if 'perfil' not in st.session_state:
-    st.session_state.perfil = cargar_json(ARCHIVO_PERFIL, {"alias": "", "info_medica": "", "telefono": ""})
-if 'historial' not in st.session_state:
-    st.session_state.historial = cargar_json(ARCHIVO_HISTORIAL, [])
-
-# --- MENÚ LATERAL TÁCTICO ---
-st.sidebar.title("⚡ NÚCLEO VITAL")
-st.sidebar.markdown("---")
-menu = st.sidebar.radio(
-    "Navegación Táctica:",
-    ["🛡️ Escudo y Memoria", "📷 Escáner Táctico Pro", "🩺 Triage y Alerta SOS", "⚙️ Perfil y Contacto SOS"]
+# Configuración de la página táctica
+st.set_page_config(
+    page_title="Núcleo Vital - Centro de Mando",
+    page_icon="🛡️",
+    layout="wide",
 )
-st.sidebar.markdown("---")
-st.sidebar.caption("🟢 Núcleo Activo\n\n© Corporación Racor\nDesarrollo Táctico Pro")
 
-# Validar si falta teléfono
-if not st.session_state.perfil.get("telefono") and menu != "⚙️ Perfil y Contacto SOS":
-    st.warning("⚠️ No has configurado un número de emergencia. Ve a 'Perfil y Contacto SOS'.")
+# Estilo táctico / oscuro personalizado
+st.markdown(
+    """
+    <style>
+    .main { background-color: #0e1117; color: #c9d1d9; }
+    .stButton>button { background-color: #238636; color: white; border-radius: 6px; font-weight: bold; }
+    .stTextInput>div>div>input { background-color: #161b22; color: white; border: 1px solid #30363d; }
+    </style>
+""",
+    unsafe_allow_html=True,
+)
 
-# --- PANEL 1: ESCUDO URBANO ---
-if menu == "🛡️ Escudo y Memoria":
-    st.header("🛡️ Escudo Urbano (Inteligencia de Zonas)")
-    st.markdown("**Leyenda:** 🟩 Seguro | 🟧 Precaución | 🟥 Crítico")
-    
-    destino = st.text_input("Destino o zona a transitar:", placeholder="Ej: Mercado, Av. Principal...").strip().lower()
-    opinion = st.text_input("Alimentar memoria en vivo (Reporte):", placeholder="Ej: Zona oscura, asalto reciente...")
-    
-    if st.button("🚀 Evaluar Ruta y Consolidar Memoria"):
-        if destino:
-            tiempo_actual = datetime.datetime.now()
-            if opinion:
-                st.session_state.historial.append({
-                    "destino": destino,
-                    "reporte": opinion,
-                    "fecha": tiempo_actual.strftime("%Y-%m-%d %H:%M:%S")
-                })
-                guardar_json(ARCHIVO_HISTORIAL, st.session_state.historial)
-            
-            conteo = sum(1 for reg in st.session_state.historial if reg["destino"] == destino)
-            zonas_peligrosas = ["mercado", "puente", "oscuro", "industrial", "abandonado", "trocha"]
-            es_critica = any(p in destino for p in zonas_peligrosas) or conteo >= 2
-            
-            if es_critica:
-                st.error(f"📍 DESTINO CRÍTICO: {destino.upper()}\n⚠️ {conteo} incidente(s) acumulado(s). Extreme precauciones.")
-            else:
-                st.success(f"📍 DESTINO ESTABLE: {destino.upper()}\n✅ Trayecto sin historial relevante.")
-            
-            url_mapa = f"https://www.google.com/maps/search/?api=1&query={destino.replace(' ', '+')}"
-            st.markdown(f"[🗺️ Abrir Mapa de la Zona]({url_mapa})")
-        else:
-            st.warning("Ingrese un destino.")
+# --- SISTEMA DE LICENCIAS Y CONTROL DE ACCESO ---
+# Base de datos simulada de licencias (Clave: Fecha de Expiración en formato YYYY-MM-DD)
+# Puedes modificar o añadir llaves aquí fácilmente.
+LICENCIAS_VALIDAS = {
+    "NV-MASTER-2026": "2099-12-31",  # Tu llave maestra permanente
+    "NV-OPERADOR-01": "2026-10-15",  # Ejemplo de llave para un usuario con caducidad
+}
 
-# --- PANEL 2: ESCÁNER TÁCTICO PRO ---
-elif menu == "📷 Escáner Táctico Pro":
-    st.header("📷 Escáner Táctico Pro")
-    st.markdown("Cargue una foto de su galería o use la cámara de su dispositivo para auditar el producto.")
-    
-    modo = st.radio("Método de captura:", ["📂 Galería", "📸 Cámara en vivo"])
-    
-    archivo_foto = None
-    if modo == "📂 Galería":
-        archivo_foto = st.file_uploader("Seleccionar foto de la etiqueta", type=['jpg', 'jpeg', 'png'])
+CLAVE_MAESTRA = "ADMIN_RAEDCO_2026"  # Contraseña secreta solo para ti (Administrador)
+
+
+def verificar_acceso(token):
+  if not token:
+    return False, "Por favor ingrese una clave de acceso."
+
+  # Verificar si es la clave maestra de administración
+  if token == CLAVE_MAESTRA:
+    return True, "MASTER"
+
+  # Verificar si la clave existe en el sistema
+  if token in LICENCIAS_VALIDAS:
+    fecha_exp_str = LICENCIAS_VALIDAS[token]
+    fecha_exp = datetime.strptime(fecha_exp_str, "%Y-%m-%d").date()
+    hoy = datetime.now().date()
+
+    if hoy <= fecha_exp:
+      return True, "USUARIO"
     else:
-        # Streamlit abre la cámara de forma nativa sin necesidad de OpenCV
-        archivo_foto = st.camera_input("Tomar foto del envase")
-        
-    if archivo_foto is not None:
-        st.image(archivo_foto, width=300)
-        nombre_archivo = archivo_foto.name.lower()
-        
-        with st.spinner('Analizando matriz química...'):
-            if any(w in nombre_archivo for w in ["embutido", "hotdog", "salchicha", "jamon", "chorizo", "tocino", "nugget"]):
-                st.error("🟥 ALERTA: EMBUTIDO Y CARNE PROCESADA\nContiene nitritos y exceso de sodio. Causa inflamación celular. Consumo restringido.")
-            elif any(w in nombre_archivo for w in ["mantequilla", "margarina", "manteca", "grasa"]):
-                st.warning("🟧 PRECAUCIÓN: GRASAS PROCESADAS\nGrasas saturadas o trans que promueven rigidez arterial. Uso moderado.")
-            elif any(w in nombre_archivo for w in ["frug", "nectar", "gaseosa", "soda", "cola", "energizante"]):
-                st.error("🟥 ALERTA: BEBIDA AZUCARADA\nAlta fructosa. Genera picos glicémicos y sobrecarga hepática. No apto para hidratación.")
-            elif any(w in nombre_archivo for w in ["tartrazina", "caramelo", "chupete", "gomita", "helado", "postre"]):
-                st.error("🟥 ALERTA: AZÚCAR Y COLORANTES\nDaño de esmalte y aporte calórico vacío. Prohibido en consumo diario.")
-            elif any(w in nombre_archivo for w in ["sopa", "instant", "caldo", "fideo", "mazamorra"]):
-                st.warning("🟧 PRECAUCIÓN: PREPARADO INDUSTRIAL\nAlto en sodio, glutamato y almidones refinados. Consumo moderado.")
-            else:
-                st.success("🟩 PRODUCTO APTO (VERIFICADO)\nPerfil limpio sin aditivos críticos. Apto para consumo habitual dentro de una dieta equilibrada.")
+      return (
+          False,
+          f"⚠️ La clave ingresada ha caducado el {fecha_exp_str}. Contacte al"
+          " administrador.",
+      )
+  else:
+    return False, "❌ Clave de acceso inválida o no autorizada."
 
-# --- PANEL 3: TRIAGE Y SOS ---
-elif menu == "🩺 Triage y Alerta SOS":
-    st.header("🩺 Asistente Clínico y Alerta SOS")
-    st.info("💡 En celular: Toca el cuadro de texto y usa el **micrófono de tu teclado** para dictar los síntomas al instante.")
-    
-    sintomas = st.text_area("Describa su emergencia o síntomas aquí:", height=100)
-    
-    if st.button("🚨 EVALUAR Y ENVIAR SOS", type="primary"):
-        texto_analisis = sintomas.strip().lower()
-        if not texto_analisis:
-            st.warning("Por favor, ingrese sus síntomas.")
-        else:
-            criticos = ["pecho", "respirar", "desmayo", "infarto", "colapso", "convulsión", "sangrado", "accidente", "emergencia", "asfixia", "fractura", "quemadura", "veneno"]
-            gastro = ["estómago", "barriga", "náusea", "vómito", "diarrea", "indigestión"]
-            respiratorio_leve = ["fiebre", "tos", "gripe", "resfrío", "garganta"]
-            dolor_leve = ["cabeza", "espalda", "golpe", "corte", "raspon", "caída", "muela"]
 
-            if any(palabra in texto_analisis for palabra in criticos):
-                st.error("🚨 ALERTA CRÍTICA: EMERGENCIA VITAL DETECTADA")
-                
-                alias = st.session_state.perfil.get("alias", "Usuario Desconocido")
-                info_med = st.session_state.perfil.get("info_medica", "Sin información")
-                tel = "".join(c for c in st.session_state.perfil.get("telefono", "") if c.isdigit() or c == "+")
-                
-                msg = urllib.parse.quote(f"🚨 *SOS NÚCLEO VITAL*\n👤 Usuario: {alias}\n🏥 Info Médica: {info_med}\n⚠️ Síntomas: '{texto_analisis[:80]}...'\n📍 GPS: https://maps.google.com/?q=-13.065,-76.132")
-                link_wa = f"https://wa.me/{tel}?text={msg}" if tel else f"https://wa.me/?text={msg}"
-                
-                st.markdown(f"### [🔴 HAZ CLIC AQUÍ PARA ENVIAR WHATSAPP SOS AL CONTACTO TÁCTICO]({link_wa})")
-                st.info("Instrucción: Mantenga la calma y no mueva al paciente si sospecha de trauma espinal.")
-            else:
-                st.success("✅ EVALUACIÓN PRIMARIA: ESTADO ESTABLE")
-                if any(p in texto_analisis for p in gastro):
-                    st.write("💊 **Botiquín Básico:** Suero oral a sorbos. Si hay retorcijón, antiespasmódico (Buscapina). Dieta blanda.")
-                elif any(p in texto_analisis for p in respiratorio_leve):
-                    st.write("💊 **Botiquín Básico:** Paracetamol (500mg) para la fiebre. Reposo e hidratación constante.")
-                elif any(p in texto_analisis for p in dolor_leve):
-                    st.write("💊 **Botiquín Básico:** Ibuprofeno (400mg). Aplique hielo envuelto en un paño en la zona afectada.")
-                else:
-                    st.write("💊 **Botiquín Básico:** Paracetamol (500mg) y reposo preventivo. Monitorice la evolución.")
+# Inicializar estado de sesión
+if "autenticado" not in st.session_state:
+  st.session_state.autenticado = False
+  st.session_state.tipo_usuario = None
 
-# --- PANEL 4: PERFIL ---
-elif menu == "⚙️ Perfil y Contacto SOS":
-    st.header("⚙️ Configuración del Perfil")
-    
-    nuevo_alias = st.text_input("Nombre o Alias (Identificador):", value=st.session_state.perfil.get("alias", ""))
-    nuevo_tel = st.text_input("Número de Contacto SOS (Añadir código de país, ej: +51999888777):", value=st.session_state.perfil.get("telefono", ""))
-    nueva_info = st.text_area("Información Médica Relevante (Alergias, Sangre):", value=st.session_state.perfil.get("info_medica", ""))
-    
-    if st.button("💾 GUARDAR PERFIL Y ACTIVAR RUTA SOS", type="primary"):
-        if not nuevo_tel:
-            st.warning("El número de teléfono es obligatorio para el correcto funcionamiento del SOS.")
-        else:
-            st.session_state.perfil["alias"] = nuevo_alias
-            st.session_state.perfil["telefono"] = nuevo_tel
-            st.session_state.perfil["info_medica"] = nueva_info
-            guardar_json(ARCHIVO_PERFIL, st.session_state.perfil)
-            st.success("✅ Perfil actualizado y guardado en la memoria local exitosamente.")
+# --- PANTALLA DE BLOQUEO / LOGIN ---
+if not st.session_state.autenticado:
+  st.markdown(
+      "<h1 style='text-align: center; color: #ff4b4b;'>🛡️ NÚCLEO VITAL</h1>",
+      unsafe_allow_html=True,
+  )
+  st.markdown(
+      "<h3 style='text-align: center; color: #8b949e;'>SISTEMA DE CONTROL"
+      " TÁCTICO RESTRINGIDO</h3>",
+      unsafe_allow_html=True,
+  )
+  st.write("---")
+
+  col1, col2, col3 = st.columns([1, 2, 1])
+  with col2:
+    st.info(
+        "Acceso protegido. Introduzca su llave de autorización proporcionada"
+        " por el comando central."
+    )
+    token_ingresado = st.text_input("🔑 Llave de Acceso", type="password")
+
+    if st.button("Validar Credenciales", use_container_width=True):
+      valido, mensaje = verificar_acceso(token_ingresado)
+      if valido:
+        st.session_state.autenticado = True
+        st.session_state.tipo_usuario = mensaje
+        st.rerun()
+      else:
+        st.error(mensaje)
+
+  st.stop()  # Detiene la ejecución aquí si no está autenticado
+
+# --- APLICACIÓN PRINCIPAL (UNA VEZ AUTORIZADO) ---
+st.sidebar.title("⚡ Navegación Táctica")
+
+# Si el usuario es el Administrador (Master), habilitar panel de control de llaves
+if st.session_state.tipo_usuario == "MASTER":
+  menu = st.sidebar.radio(
+      "Seleccionar Modo", ["Centro de Mando", "Panel Maestro (Licencias)"]
+  )
+else:
+  menu = "Centro de Mando"
+
+if st.sidebar.button("🔒 Cerrar Sesión"):
+  st.session_state.autenticado = False
+  st.session_state.tipo_usuario = None
+  st.rerun()
+
+# --- VISTA: PANEL MAESTRO (SOLO PARA TI) ---
+if menu == "Panel Maestro (Licencias)":
+  st.title("⚙️ Panel de Control Maestro - Gestión de Licencias")
+  st.write(
+      "Bienvenido, Comandante. Aquí puede supervisar y controlar los accesos"
+      " autorizados."
+  )
+
+  st.subheader("📋 Licencias Activas en el Sistema")
+  for llave, exp in LICENCIAS_VALIDAS.items():
+    st.write(f"- **Llave:** `{llave}` | **Expira:** `{exp}`")
+
+  st.markdown("---")
+  st.subheader("➕ Generar Nueva Llave Temporal")
+  nueva_llave = st.text_input("Nombre de la nueva llave (Ej: NV-CLIENTE-02)")
+  dias_validez = st.number_input(
+      "Días de vigencia antes de caducar", min_value=1, max_value=365, value=30
+  )
+
+  if st.button("Registrar y Activar Llave"):
+    if nueva_llave:
+      nueva_fecha = (datetime.now().date() + timedelta(days=int(dias_validez))).strftime(
+          "%Y-m-d"
+      )
+      LICENCIAS_VALIDAS[nueva_llave] = nueva_fecha
+      st.success(
+          f"¡Llave '{nueva_llave}' creada con éxito! Expira el {nueva_fecha}."
+      )
+    else:
+      st.error("Ingrese un nombre válido para la llave.")
+
+# --- VISTA: CENTRO DE MANDO (APLICACIÓN PRINCIPAL) ---
+elif menu == "Centro de Mando":
+  st.title("⚡ Núcleo Vital - Centro de Mando")
+  st.markdown(
+      "Estado del Sistema: <span style='color: #238636; font-weight: bold;'>●"
+      " SEGURO Y OPERATIVO</span>",
+      unsafe_allow_html=True,
+  )
+
+  # Alerta de ejemplo
+  st.warning("No hay alertas críticas en la zona monitoreada actualmente.")
+
+  # Tu interfaz táctica habitual
+  st.subheader("🛡️ Escudo Urbano (Inteligencia de Zonas)")
+  st.write("Leyenda: 🟩 Seguro | 🟨 Precaución | 🟥 Crítico")
+
+  zona_input = st.text_input(
+      "Destino o zona a transitar:",
+      placeholder="Ej. Mercado, Av. Principal...",
+  )
+  if st.button("Evaluar Ruta y Consolidar Memoria"):
+    if zona_input:
+      st.success(f"Analizando parámetros tácticos para la zona: {zona_input}")
+    else:
+      st.warning("Por favor ingrese una zona válida.")
