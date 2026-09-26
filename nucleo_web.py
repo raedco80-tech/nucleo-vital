@@ -20,14 +20,15 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# --- SISTEMA DE LICENCIAS Y CONTROL DE ACCESO ---
-# Base de datos simulada de licencias (Clave: Fecha de Expiración en formato YYYY-MM-DD)
-LICENCIAS_VALIDAS = {
-    "NV-MASTER-2026": "2099-12-31",  # Tu llave maestra permanente
-    "NV-OPERADOR-01": "2026-10-15",  # Ejemplo de llave para un usuario con caducidad
-}
+# --- SISTEMA DE LICENCIAS (GUARDADO EN MEMORIA DE SESIÓN) ---
+CLAVE_MAESTRA = "ADMIN_RAEDCO_2026"  # Tu contraseña secreta de administrador
 
-CLAVE_MAESTRA = "ADMIN_RAEDCO_2026"  # Contraseña secreta solo para ti (Administrador)
+# Inicializar la lista de licencias en la sesión para que no se borren al editar
+if "licencias_db" not in st.session_state:
+  st.session_state.licencias_db = {
+      "NV-MASTER-2026": "2099-12-31",  # Tu llave maestra permanente
+      "NV-OPERADOR-01": "2026-10-15",  # Llave de ejemplo con caducidad
+  }
 
 
 def verificar_acceso(token):
@@ -39,8 +40,8 @@ def verificar_acceso(token):
     return True, "MASTER"
 
   # Verificar si la clave existe en el sistema
-  if token in LICENCIAS_VALIDAS:
-    fecha_exp_str = LICENCIAS_VALIDAS[token]
+  if token in st.session_state.licencias_db:
+    fecha_exp_str = st.session_state.licencias_db[token]
     fecha_exp = datetime.strptime(fecha_exp_str, "%Y-%m-%d").date()
     hoy = datetime.now().date()
 
@@ -57,7 +58,6 @@ def verificar_acceso(token):
 
 
 # --- PERSISTENCIA AUTOMÁTICA EN EL DISPOSITIVO ---
-# Capturamos parámetros de la URL o del almacenamiento local del navegador
 query_params = st.query_params
 token_guardado = query_params.get("token", None)
 
@@ -65,14 +65,13 @@ if "autenticado" not in st.session_state:
   st.session_state.autenticado = False
   st.session_state.tipo_usuario = None
 
-  # Si el dispositivo ya tenía un token guardado previamente, lo validamos en automático
   if token_guardado:
     valido, tipo = verificar_acceso(token_guardado)
     if valido:
       st.session_state.autenticado = True
       st.session_state.tipo_usuario = tipo
 
-# --- PANTALLA DE BLOQUEO / LOGIN (SOLO SI NO ESTÁ AUTORIZADO) ---
+# --- PANTALLA DE BLOQUEO / LOGIN ---
 if not st.session_state.autenticado:
   st.markdown(
       "<h1 style='text-align: center; color: #ff4b4b;'>🛡️ NÚCLEO VITAL</h1>",
@@ -96,7 +95,6 @@ if not st.session_state.autenticado:
     if st.button("Validar y Recordar Dispositivo", use_container_width=True):
       valido, mensaje = verificar_acceso(token_ingresado)
       if valido:
-        # Guardamos el token en la URL/Navegador del celular para que NUNCA más se lo vuelva a pedir
         st.query_params["token"] = token_ingresado
         st.session_state.autenticado = True
         st.session_state.tipo_usuario = mensaje
@@ -104,12 +102,11 @@ if not st.session_state.autenticado:
       else:
         st.error(mensaje)
 
-  st.stop()  # Detiene la ejecución aquí si no está autenticado
+  st.stop()
 
-# --- APLICACIÓN PRINCIPAL (UNA VEZ AUTORIZADO) ---
+# --- APLICACIÓN PRINCIPAL ---
 st.sidebar.title("⚡ Navegación Táctica")
 
-# Si el usuario es el Administrador (Master), habilitar panel de control de llaves
 if st.session_state.tipo_usuario == "MASTER":
   menu = st.sidebar.radio(
       "Seleccionar Modo", ["Centro de Mando", "Panel Maestro (Licencias)"]
@@ -118,44 +115,66 @@ else:
   menu = "Centro de Mando"
 
 if st.sidebar.button("🔒 Olvidar Dispositivo / Cerrar Sesión"):
-  # Borramos el token del navegador del usuario
   st.query_params.clear()
   st.session_state.autenticado = False
   st.session_state.tipo_usuario = None
   st.rerun()
 
-# --- VISTA: PANEL MAESTRO (SOLO PARA TI) ---
+# --- VISTA: PANEL MAESTRO (ADMINISTRACIÓN VISUAL) ---
 if menu == "Panel Maestro (Licencias)":
   st.title("⚙️ Panel de Control Maestro - Gestión de Licencias")
   st.write(
-      "Bienvenido, Comandante. Aquí puede supervisar y controlar los accesos"
-      " autorizados."
+      "Comandante, aquí puede administrar, extender o revocar las licencias de"
+      " sus usuarios visualmente."
   )
 
-  st.subheader("📋 Licencias Activas en el Sistema")
-  for llave, exp in LICENCIAS_VALIDAS.items():
-    st.write(f"- **Llave:** `{llave}` | **Expira:** `{exp}`")
+  st.subheader("📋 Licencias Activas y Edición de Fechas")
 
-  st.markdown("---")
+  # Listar y permitir editar o borrar cada llave directamente
+  for llave, exp_str in list(st.session_state.licencias_db.items()):
+    col1, col2, col3 = st.columns([2, 2, 1])
+    with col1:
+      st.write(f"🔑 **{llave}**")
+    with col2:
+      # Permitir cambiar la fecha directamente seleccionándola en un calendario visual
+      fecha_actual_obj = datetime.strptime(exp_str, "%Y-%m-%d").date()
+      nueva_fecha_obj = st.date_input(
+          f"Expira ({llave})", value=fecha_actual_obj, key=f"date_{llave}"
+      )
+      # Actualizar si cambia la fecha
+      st.session_state.licencias_db[llave] = nueva_fecha_obj.strftime(
+          "%Y-%m-%d"
+      )
+    with col3:
+      st.write("")
+      st.write("")
+      if llave != "NV-MASTER-2026":  # Evitar borrar tu llave maestra por accidente
+        if st.button("🗑️ Revocar", key=f"del_{llave}"):
+          del st.session_state.licencias_db[llave]
+          st.rerun()
+
+    st.write("---")
+
   st.subheader("➕ Generar Nueva Llave Temporal")
   nueva_llave = st.text_input("Nombre de la nueva llave (Ej: NV-CLIENTE-02)")
   dias_validez = st.number_input(
-      "Días de vigencia antes de caducar", min_value=1, max_value=365, value=30
+      "Días de vigencia inicial", min_value=1, max_value=365, value=30
   )
 
-  if st.button("Registrar y Activar Llave"):
+  if st.button("Registrar y Activar Nueva Llave"):
     if nueva_llave:
-      nueva_fecha = (
+      calculo_fecha = (
           datetime.now().date() + timedelta(days=int(dias_validez))
       ).strftime("%Y-%m-%d")
-      LICENCIAS_VALIDAS[nueva_llave] = nueva_fecha
+      st.session_state.licencias_db[nueva_llave] = calculo_fecha
       st.success(
-          f"¡Llave '{nueva_llave}' creada con éxito! Expira el {nueva_fecha}."
+          f"¡Llave '{nueva_llave}' creada con éxito! Expira el {calculo_fecha}."
       )
+      st.rerun()
     else:
       st.error("Ingrese un nombre válido para la llave.")
 
-# --- VISTA: CENTRO DE MANDO (APLICACIÓN PRINCIPAL) ---
+# --- VISTA: CENTRO DE MANDO ---
 elif menu == "Centro de Mando":
   st.title("⚡ Núcleo Vital - Centro de Mando")
   st.markdown(
@@ -164,10 +183,8 @@ elif menu == "Centro de Mando":
       unsafe_allow_html=True,
   )
 
-  # Alerta de ejemplo
   st.warning("No hay alertas críticas en la zona monitoreada actualmente.")
 
-  # Tu interfaz táctica habitual
   st.subheader("🛡️ Escudo Urbano (Inteligencia de Zonas)")
   st.write("Leyenda: 🟩 Seguro | 🟨 Precaución | 🟥 Crítico")
 
