@@ -1,4 +1,3 @@
-import streamlit as datetime, hashlib
 from datetime import datetime, timedelta
 import streamlit as st
 
@@ -23,7 +22,6 @@ st.markdown(
 
 # --- SISTEMA DE LICENCIAS Y CONTROL DE ACCESO ---
 # Base de datos simulada de licencias (Clave: Fecha de Expiración en formato YYYY-MM-DD)
-# Puedes modificar o añadir llaves aquí fácilmente.
 LICENCIAS_VALIDAS = {
     "NV-MASTER-2026": "2099-12-31",  # Tu llave maestra permanente
     "NV-OPERADOR-01": "2026-10-15",  # Ejemplo de llave para un usuario con caducidad
@@ -51,19 +49,30 @@ def verificar_acceso(token):
     else:
       return (
           False,
-          f"⚠️ La clave ingresada ha caducado el {fecha_exp_str}. Contacte al"
+          f"⚠️ La llave ingresada ha caducado el {fecha_exp_str}. Contacte al"
           " administrador.",
       )
   else:
     return False, "❌ Clave de acceso inválida o no autorizada."
 
 
-# Inicializar estado de sesión
+# --- PERSISTENCIA AUTOMÁTICA EN EL DISPOSITIVO ---
+# Capturamos parámetros de la URL o del almacenamiento local del navegador
+query_params = st.query_params
+token_guardado = query_params.get("token", None)
+
 if "autenticado" not in st.session_state:
   st.session_state.autenticado = False
   st.session_state.tipo_usuario = None
 
-# --- PANTALLA DE BLOQUEO / LOGIN ---
+  # Si el dispositivo ya tenía un token guardado previamente, lo validamos en automático
+  if token_guardado:
+    valido, tipo = verificar_acceso(token_guardado)
+    if valido:
+      st.session_state.autenticado = True
+      st.session_state.tipo_usuario = tipo
+
+# --- PANTALLA DE BLOQUEO / LOGIN (SOLO SI NO ESTÁ AUTORIZADO) ---
 if not st.session_state.autenticado:
   st.markdown(
       "<h1 style='text-align: center; color: #ff4b4b;'>🛡️ NÚCLEO VITAL</h1>",
@@ -79,14 +88,16 @@ if not st.session_state.autenticado:
   col1, col2, col3 = st.columns([1, 2, 1])
   with col2:
     st.info(
-        "Acceso protegido. Introduzca su llave de autorización proporcionada"
-        " por el comando central."
+        "Ingrese su llave de autorización por única vez. Quedará registrada"
+        " en su dispositivo."
     )
     token_ingresado = st.text_input("🔑 Llave de Acceso", type="password")
 
-    if st.button("Validar Credenciales", use_container_width=True):
+    if st.button("Validar y Recordar Dispositivo", use_container_width=True):
       valido, mensaje = verificar_acceso(token_ingresado)
       if valido:
+        # Guardamos el token en la URL/Navegador del celular para que NUNCA más se lo vuelva a pedir
+        st.query_params["token"] = token_ingresado
         st.session_state.autenticado = True
         st.session_state.tipo_usuario = mensaje
         st.rerun()
@@ -106,7 +117,9 @@ if st.session_state.tipo_usuario == "MASTER":
 else:
   menu = "Centro de Mando"
 
-if st.sidebar.button("🔒 Cerrar Sesión"):
+if st.sidebar.button("🔒 Olvidar Dispositivo / Cerrar Sesión"):
+  # Borramos el token del navegador del usuario
+  st.query_params.clear()
   st.session_state.autenticado = False
   st.session_state.tipo_usuario = None
   st.rerun()
@@ -132,9 +145,9 @@ if menu == "Panel Maestro (Licencias)":
 
   if st.button("Registrar y Activar Llave"):
     if nueva_llave:
-      nueva_fecha = (datetime.now().date() + timedelta(days=int(dias_validez))).strftime(
-          "%Y-m-d"
-      )
+      nueva_fecha = (
+          datetime.now().date() + timedelta(days=int(dias_validez))
+      ).strftime("%Y-%m-%d")
       LICENCIAS_VALIDAS[nueva_llave] = nueva_fecha
       st.success(
           f"¡Llave '{nueva_llave}' creada con éxito! Expira el {nueva_fecha}."
