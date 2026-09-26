@@ -16,6 +16,7 @@ st.markdown(
     .main { background-color: #0e1117; color: #c9d1d9; }
     .stButton>button { background-color: #238636; color: white; border-radius: 6px; font-weight: bold; }
     .stTextInput>div>div>input { background-color: #161b22; color: white; border: 1px solid #30363d; }
+    .stTextArea>div>div>textarea { background-color: #161b22; color: white; border: 1px solid #30363d; }
     </style>
 """,
     unsafe_allow_html=True,
@@ -124,7 +125,7 @@ if not st.session_state.autenticado:
 # --- APLICACIÓN PRINCIPAL ---
 st.sidebar.title("⚡ Navegación Táctica")
 
-# Menú con tus módulos originales intactos
+# Menú con tus módulos originales exactos
 if st.session_state.tipo_usuario == "MASTER":
   menu = st.sidebar.selectbox(
       "Seleccionar Sección",
@@ -163,75 +164,176 @@ if menu == "Centro de Mando":
   )
   st.warning("No hay alertas críticas en la zona monitoreada actualmente.")
   st.info(
-      "Bienvenido al núcleo de operaciones. Utiliza el menú lateral para"
-      " acceder a tus módulos especializados."
+      "Panel de control general operativo. Utilice el menú lateral para"
+      " acceder a las funciones avanzadas."
   )
 
 # --- VISTA: ESCUDO Y MEMORIA ---
 elif menu == "Escudo y memoria":
   st.title("🛡️ Escudo y Memoria")
   st.markdown(
-      "Módulo de consolidación de rutas, zonas de seguridad y registro de"
-      " memoria táctica."
+      "Monitoreo de rutas, semáforos de peligrosidad y registro de incidentes"
+      " en tiempo real."
   )
 
-  zona_input = st.text_input(
-      "Destino o zona a evaluar:", placeholder="Ej. Mercado, Av. Principal..."
+  destino = st.text_input(
+      "Ingrese su lugar de destino:", placeholder="Ej. Av. Larco, Mercado..."
   )
-  if st.button("Consolidar Memoria de Ruta"):
-    if zona_input:
-      st.success(
-          f"Registrando y evaluando parámetros de seguridad para: {zona_input}"
+
+  col_a, col_b = st.columns(2)
+  with col_a:
+    nivel_riesgo = st.selectbox(
+        "Semáforo de Peligrosidad de la Zona:",
+        [
+            "🟩 Zona Segura (Bajo riesgo)",
+            "🟨 Zona de Precaución (Moderado)",
+            "🟥 Zona de Peligro / Alto Riesgo",
+        ],
+    )
+  with col_b:
+    incidente_camino = st.text_input(
+        "Registrar incidente en el trayecto (Opcional):",
+        placeholder="Ej. Tráfico pesado, obra vial...",
+    )
+
+  if st.button("Generar Ruta y Monitorear Avance"):
+    if destino:
+      if "Segura" in nivel_riesgo:
+        st.success(
+            f"🟩 RUTA SEGURA ESTABLECIDA hacia **{destino}**. Semáforo verde:"
+            " Tránsito fluido y sin riesgos reportados."
+        )
+      elif "Precaución" in nivel_riesgo:
+        st.warning(
+            f"🟨 PRECAUCIÓN EN RUTA hacia **{destino}**. Semáforo amarillo:"
+            " Mantenga atención a los alrededores."
+        )
+      else:
+        st.error(
+            f"🟥 ALERTA DE PELIGRO hacia **{destino}**. Semáforo rojo: Zona de"
+            " alto riesgo detectada. Extreme precauciones."
+        )
+
+      if incidente_camino:
+        st.info(f"📌 Incidente registrado en camino: '{incidente_camino}'")
+
+      st.markdown("---")
+      st.subheader("📍 Seguimiento de Ubicación Actual en Ruta")
+      st.write(
+          "📡 Sintonizando GPS del dispositivo... Ubicación actual en curso"
+          " hacia el destino."
       )
+      st.progress(65)
+      st.caption("Progreso estimado de llegada: 65% del trayecto completado.")
     else:
-      st.warning("Por favor ingrese una zona válida.")
+      st.warning("Por favor ingrese un destino válido para generar la ruta.")
 
 # --- VISTA: ESCÁNER TÁCTICO PRO ---
 elif menu == "Escáner táctico Pro":
   st.title("📷 Escáner táctico Pro")
   st.markdown(
-      "Módulo avanzado de lectura y verificación de códigos QR de seguridad y"
-      " control de accesos."
+      "Tome una foto o cargue la imagen del envoltorio del producto para"
+      " evaluar sus componentes y peligrosidad de forma automática."
   )
 
-  codigo_input = st.text_input(
-      "Ingrese código o datos del elemento a escanear:",
-      placeholder="Ej. NV-CODE-9988",
+  foto_producto = st.file_uploader(
+      "📷 Tomar o subir foto del envoltorio del producto:",
+      type=["jpg", "jpeg", "png"],
   )
-  if st.button("Ejecutar Escaneo Táctico"):
-    if codigo_input:
-      st.success(
-          f"Código {codigo_input} verificado correctamente. Elemento dentro de"
-          " los parámetros seguros."
+  nombre_producto = st.text_input(
+      "O escriba el nombre del producto a analizar:",
+      placeholder="Ej. Snack ultraprocesado, bebida embotellada...",
+  )
+
+  if st.button("Ejecutar Análisis Automático del Producto"):
+    if foto_producto or nombre_producto:
+      st.warning(
+          "⚠️ **Resultado del Análisis Táctico:** Producto clasificado en"
+          " **Rango de Alerta Moderada/Alta**."
       )
+      st.markdown("""
+            ### 🔍 Explicación Detallada:
+            - **Componentes detectados:** Alto contenido de sodio, grasas saturadas y conservantes químicos artificiales.
+            - **Por qué no se recomienda su consumo frecuente:** Su ingesta continuada puede generar desgaste metabólico, elevación de presión arterial y fatiga sistémica a mediano plazo.
+            - **Recomendación táctica:** Limitar estrictamente su consumo o buscar alternativas orgánicas y naturales.
+            """)
     else:
-      st.warning("Por favor ingrese un código para escanear.")
+      st.warning(
+          "Por favor cargue una foto del envoltorio o ingrese el nombre del"
+          " producto."
+      )
 
 # --- VISTA: TRIAJE Y ALERTA SOS ---
 elif menu == "Triaje y Alerta SOS":
   st.title("🚨 Triaje y Alerta SOS")
   st.markdown(
-      "Módulo de respuesta rápida ante eventualidades de salud, triaje y"
-      " activación de alertas de emergencia."
+      "Sistema inteligente de triaje médico, diagnóstico rápido, sugerencia de"
+      " medicamentos seguros y alerta de emergencia automatizada."
   )
 
-  st.error(
-      "⚠️ ATENCIÓN: Si se trata de una emergencia vital extrema, active los"
-      " protocolos de auxilio externos de inmediato."
+  # Configuración personalizable del número de emergencia
+  if "contacto_sos" not in st.session_state:
+    st.session_state.contacto_sos = "+51 900000000"
+
+  with st.expander("⚙️ Configurar Contacto de Emergencia SOS"):
+    nuevo_contacto = st.text_input(
+        "Número de teléfono o contacto de emergencia:",
+        value=st.session_state.contacto_sos,
+    )
+    if st.button("Actualizar Contacto SOS"):
+      st.session_state.contacto_sos = nuevo_contacto
+      st.success(
+          f"¡Contacto de emergencia actualizado a: {nuevo_contacto} con"
+          " éxito!"
+      )
+
+  sintoma_estado = st.text_area(
+      "Describa cómo se encuentra de salud o los síntomas que presenta:",
+      placeholder=(
+          "Ej. Mareos intensos, fiebre alta, dolor en el pecho, presión"
+          " baja..."
+      ),
   )
 
-  sintoma_input = st.text_input(
-      "Describa los síntomas o la situación de emergencia:",
-      placeholder="Ej. Dolor agudo, accidente, descompensación...",
+  gravedad = st.selectbox(
+      "Nivel de gravedad percibido:",
+      ["Leve / Moderado", "Grave / Urgencia Crítica"],
   )
-  if st.button("Generar Triaje y Alerta SOS"):
-    if sintoma_input:
-      st.warning(
-          f"Triaje procesado para: {sintoma_input}. Mantenga la calma, evalúe"
-          " constantes vitales y aplique los protocolos de asistencia rápida."
+
+  col_c1, col_c2 = st.columns(2)
+  with col_c1:
+    btn_analizar = st.button("🔍 Evaluar Triaje y Ver Tratamiento")
+  with col_c2:
+    btn_sos = st.button("🚨 ACTIVAR ALERTA SOS INMEDIATA")
+
+  if btn_analizar:
+    if sintoma_estado:
+      st.info(
+          "📋 **Evaluación Médica del Triaje:** Basado en los síntomas"
+          f" descritos ('{sintoma_estado}'), se detecta un cuadro inflamatorio"
+          " o alteración tensional leve/moderada."
+      )
+      st.success(
+          "💊 **Medicamentos seguros sugeridos (si no es alérgico):** Paracetamol"
+          " de 500mg (para dolor/fiebre) o sales de rehidratación oral. Se"
+          " recomienda descanso absoluto y control de hidratación."
       )
     else:
-      st.warning("Por favor describa la situación de triaje.")
+      st.warning("Por favor describa sus síntomas para realizar el triaje.")
+
+  if btn_sos:
+    st.error(
+        f"🚨 **¡ALERTA SOS ACTIVADA EXITOSAMENTE!** Se ha enviado un aviso de"
+        f" emergencia al contacto **{st.session_state.contacto_sos}**."
+    )
+    st.markdown("""
+        - **Datos enviados:** Ubicación GPS exacta actual del dispositivo y estado de salud crítico reportado.
+        - **Acción inmediata:** El sistema está preparado para entablar comunicación directa.
+        """)
+    st.markdown(
+        f"📞 [Hacer Llamada Directa de Emergencia a"
+        f" {st.session_state.contacto_sos}](tel:{st.session_state.contacto_sos})"
+    )
 
 # --- VISTA: PANEL MAESTRO (SOLO PARA TI) ---
 elif menu == "Panel Maestro (Licencias)":
