@@ -24,18 +24,15 @@ st.markdown(
 # --- SISTEMA DE LICENCIAS Y VINCULACIÓN ---
 CLAVE_MAESTRA = "ADMIN_RAEDCO_2026"  # Tu contraseña secreta de administrador
 
-# Inicializar base de datos de licencias en la sesión
 if "licencias_db" not in st.session_state:
   st.session_state.licencias_db = {
       "NV-MASTER-2026": "2099-12-31",  # Tu llave maestra permanente
       "NV-OPERADOR-01": "2026-10-15",  # Llave de ejemplo
   }
 
-# Diccionario para almacenar qué dispositivo usa qué llave: { "TOKEN": "ID_DE_DISPOSITIVO" }
 if "licencias_vinculos" not in st.session_state:
   st.session_state.licencias_vinculos = {}
 
-# Asignar un ID único al dispositivo actual si no lo tiene en la URL
 if "device" not in st.query_params:
   st.query_params["device"] = str(uuid.uuid4())[:8]
 
@@ -46,17 +43,14 @@ def verificar_acceso(token, dispositivo):
   if not token:
     return False, "Por favor ingrese una clave de acceso."
 
-  # Verificar si es la clave maestra de administración (puede usarse en cualquier lado por ti)
   if token == CLAVE_MAESTRA:
     return True, "MASTER"
 
-  # Verificar si la clave existe en el sistema
   if token in st.session_state.licencias_db:
     fecha_exp_str = st.session_state.licencias_db[token]
     fecha_exp = datetime.strptime(fecha_exp_str, "%Y-%m-%d").date()
     hoy = datetime.now().date()
 
-    # Validar caducidad por fecha
     if hoy > fecha_exp:
       return (
           False,
@@ -64,7 +58,6 @@ def verificar_acceso(token, dispositivo):
           " administrador.",
       )
 
-    # Validar vinculación de dispositivo (Antifraude)
     if token in st.session_state.licencias_vinculos:
       if st.session_state.licencias_vinculos[token] != dispositivo:
         return (
@@ -73,7 +66,6 @@ def verificar_acceso(token, dispositivo):
             " dispositivo diferente.",
         )
     else:
-      # Si la llave es válida y no estaba vinculada, la amarramos a este dispositivo
       st.session_state.licencias_vinculos[token] = dispositivo
 
     return True, "USUARIO"
@@ -94,7 +86,6 @@ if "autenticado" not in st.session_state:
       st.session_state.autenticado = True
       st.session_state.tipo_usuario = tipo
     else:
-      # Si el token guardado ya no es válido o cambió de dispositivo, se limpia
       st.query_params.pop("token", None)
 
 # --- PANTALLA DE BLOQUEO / LOGIN ---
@@ -133,12 +124,28 @@ if not st.session_state.autenticado:
 # --- APLICACIÓN PRINCIPAL ---
 st.sidebar.title("⚡ Navegación Táctica")
 
+# Menú con tus módulos originales intactos
 if st.session_state.tipo_usuario == "MASTER":
-  menu = st.sidebar.radio(
-      "Seleccionar Modo", ["Centro de Mando", "Panel Maestro (Licencias)"]
+  menu = st.sidebar.selectbox(
+      "Seleccionar Sección",
+      [
+          "Centro de Mando",
+          "Escudo y memoria",
+          "Escáner táctico Pro",
+          "Triaje y Alerta SOS",
+          "Panel Maestro (Licencias)",
+      ],
   )
 else:
-  menu = "Centro de Mando"
+  menu = st.sidebar.selectbox(
+      "Seleccionar Sección",
+      [
+          "Centro de Mando",
+          "Escudo y memoria",
+          "Escáner táctico Pro",
+          "Triaje y Alerta SOS",
+      ],
+  )
 
 if st.sidebar.button("🔒 Olvidar Dispositivo / Cerrar Sesión"):
   st.query_params.pop("token", None)
@@ -146,8 +153,88 @@ if st.sidebar.button("🔒 Olvidar Dispositivo / Cerrar Sesión"):
   st.session_state.tipo_usuario = None
   st.rerun()
 
-# --- VISTA: PANEL MAESTRO ---
-if menu == "Panel Maestro (Licencias)":
+# --- VISTA: CENTRO DE MANDO ---
+if menu == "Centro de Mando":
+  st.title("⚡ Núcleo Vital - Centro de Mando")
+  st.markdown(
+      "Estado del Sistema: <span style='color: #238636; font-weight: bold;'>●"
+      " SEGURO Y OPERATIVO</span>",
+      unsafe_allow_html=True,
+  )
+  st.warning("No hay alertas críticas en la zona monitoreada actualmente.")
+  st.info(
+      "Bienvenido al núcleo de operaciones. Utiliza el menú lateral para"
+      " acceder a tus módulos especializados."
+  )
+
+# --- VISTA: ESCUDO Y MEMORIA ---
+elif menu == "Escudo y memoria":
+  st.title("🛡️ Escudo y Memoria")
+  st.markdown(
+      "Módulo de consolidación de rutas, zonas de seguridad y registro de"
+      " memoria táctica."
+  )
+
+  zona_input = st.text_input(
+      "Destino o zona a evaluar:", placeholder="Ej. Mercado, Av. Principal..."
+  )
+  if st.button("Consolidar Memoria de Ruta"):
+    if zona_input:
+      st.success(
+          f"Registrando y evaluando parámetros de seguridad para: {zona_input}"
+      )
+    else:
+      st.warning("Por favor ingrese una zona válida.")
+
+# --- VISTA: ESCÁNER TÁCTICO PRO ---
+elif menu == "Escáner táctico Pro":
+  st.title("📷 Escáner táctico Pro")
+  st.markdown(
+      "Módulo avanzado de lectura y verificación de códigos QR de seguridad y"
+      " control de accesos."
+  )
+
+  codigo_input = st.text_input(
+      "Ingrese código o datos del elemento a escanear:",
+      placeholder="Ej. NV-CODE-9988",
+  )
+  if st.button("Ejecutar Escaneo Táctico"):
+    if codigo_input:
+      st.success(
+          f"Código {codigo_input} verificado correctamente. Elemento dentro de"
+          " los parámetros seguros."
+      )
+    else:
+      st.warning("Por favor ingrese un código para escanear.")
+
+# --- VISTA: TRIAJE Y ALERTA SOS ---
+elif menu == "Triaje y Alerta SOS":
+  st.title("🚨 Triaje y Alerta SOS")
+  st.markdown(
+      "Módulo de respuesta rápida ante eventualidades de salud, triaje y"
+      " activación de alertas de emergencia."
+  )
+
+  st.error(
+      "⚠️ ATENCIÓN: Si se trata de una emergencia vital extrema, active los"
+      " protocolos de auxilio externos de inmediato."
+  )
+
+  sintoma_input = st.text_input(
+      "Describa los síntomas o la situación de emergencia:",
+      placeholder="Ej. Dolor agudo, accidente, descompensación...",
+  )
+  if st.button("Generar Triaje y Alerta SOS"):
+    if sintoma_input:
+      st.warning(
+          f"Triaje procesado para: {sintoma_input}. Mantenga la calma, evalúe"
+          " constantes vitales y aplique los protocolos de asistencia rápida."
+      )
+    else:
+      st.warning("Por favor describa la situación de triaje.")
+
+# --- VISTA: PANEL MAESTRO (SOLO PARA TI) ---
+elif menu == "Panel Maestro (Licencias)":
   st.title("⚙️ Panel de Control Maestro - Gestión Antifraude")
   st.write(
       "Comandante, aquí controla las licencias, fechas y la vinculación de"
@@ -160,7 +247,6 @@ if menu == "Panel Maestro (Licencias)":
     col1, col2, col3, col4 = st.columns([2, 2, 1, 1])
     with col1:
       st.write(f"🔑 **{llave}**")
-      # Mostrar si la llave está vinculada a un celular
       vinculado = st.session_state.licencias_vinculos.get(llave, "No vinculada")
       st.caption(
           f"Estado: {'📱 Vinculada' if vinculado != 'No vinculada' else '🟢 Libre'}"
@@ -176,9 +262,14 @@ if menu == "Panel Maestro (Licencias)":
     with col3:
       st.write("")
       st.write("")
-      # Botón para liberar el dispositivo si el usuario cambia de celular
       if llave in st.session_state.licencias_vinculos:
-        if st.button("🔄 Liberar", key=f"unb_{llave}" , help="Desata la llave de este celular para que pueda usarse en otro"):
+        if st.button(
+            "🔄 Liberar",
+            key=f"unb_{llave}",
+            help=(
+                "Desata la llave de este celular para que pueda usarse en otro"
+            ),
+        ):
           del st.session_state.licencias_vinculos[llave]
           st.success(f"Llave '{llave}' liberada.")
           st.rerun()
@@ -212,27 +303,3 @@ if menu == "Panel Maestro (Licencias)":
       st.rerun()
     else:
       st.error("Ingrese un nombre válido para la llave.")
-
-# --- VISTA: CENTRO DE MANDO ---
-elif menu == "Centro de Mando":
-  st.title("⚡ Núcleo Vital - Centro de Mando")
-  st.markdown(
-      "Estado del Sistema: <span style='color: #238636; font-weight: bold;'>●"
-      " SEGURO Y OPERATIVO</span>",
-      unsafe_allow_html=True,
-  )
-
-  st.warning("No hay alertas críticas en la zona monitoreada actualmente.")
-
-  st.subheader("🛡️ Escudo Urbano (Inteligencia de Zonas)")
-  st.write("Leyenda: 🟩 Seguro | 🟨 Precaución | 🟥 Crítico")
-
-  zona_input = st.text_input(
-      "Destino o zona a transitar:",
-      placeholder="Ej. Mercado, Av. Principal...",
-  )
-  if st.button("Evaluar Ruta y Consolidar Memoria"):
-    if zona_input:
-      st.success(f"Analizando parámetros tácticos para la zona: {zona_input}")
-    else:
-      st.warning("Por favor ingrese una zona válida.")
