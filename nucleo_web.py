@@ -167,12 +167,12 @@ if menu == "Centro de Mando":
       " acceder a las funciones avanzadas."
   )
 
-# --- VISTA: ESCUDO Y MEMORIA (AUTOMÁTICO CON REDES) ---
+# --- VISTA: ESCUDO Y MEMORIA (CON SEMÁFOROS VISUALES RESTAURADOS) ---
 elif menu == "Escudo y memoria":
   st.title("🛡️ Escudo y Memoria")
   st.markdown(
-      "Monitoreo inteligente de rutas con consulta automática de seguridad en"
-      " tiempo real mediante redes e internet."
+      "Monitoreo de rutas, semáforos de peligrosidad y registro de incidentes"
+      " en tiempo real."
   )
 
   destino = st.text_input(
@@ -190,39 +190,41 @@ elif menu == "Escudo y memoria":
       if (
           "mercado" in destino_lower
           or "nocturno" in destino_lower
-          or "periférico" in destino_lower
+          or "peligro" in destino_lower
       ):
         semaforo = "🟥 ZONA DE PELIGRO / ALTO RIESGO"
         color_html = "#ff4b4b"
         recomendacion = (
-            "Se detectan reportes recientes de alta incidencia delictiva y"
-            " aglomeraciones críticas en redes y bases de datos locales."
+            "Se detectan reportes recientes de alta peligrosidad en la zona."
+            " Evite transitar sin compañía."
         )
       elif "av." in destino_lower or "principal" in destino_lower:
         semaforo = "🟨 ZONA DE PRECAUCIÓN"
         color_html = "#f0ad4e"
         recomendacion = (
-            "Tránsito moderado con reportes esporádicos de tráfico denso."
-            " Mantenerse alerta."
+            "Tránsito moderado con reportes de tráfico o aglomeración."
+            " Manténgase alerta."
         )
       else:
         semaforo = "🟩 ZONA SEGURA"
         color_html = "#238636"
         recomendacion = (
-            "Sin alertas críticas reportadas en internet para esta zona."
-            " Tránsito fluido."
+            "Sin alertas críticas reportadas en esta ruta. Tránsito fluido y"
+            " normal."
         )
 
+      # SEMÁFORO VISUAL DESTACADO
       st.markdown(
           f"### Semáforo de Peligrosidad Actual: <span style='color:"
-          f" {color_html};'>● {semaforo}</span>",
+          f" {color_html}; font-size: 26px; font-weight: bold;'>●"
+          f" {semaforo}</span>",
           unsafe_allow_html=True,
       )
-      st.info(f"📊 **Análisis en vivo de la red:** {recomendacion}")
+      st.info(f"📊 **Análisis en vivo:** {recomendacion}")
 
       if incidente_camino:
         st.warning(
-            f"📌 Incidente añadido y reportado con éxito a la red: "
+            f"📌 Incidente añadido y reportado con éxito al sistema: "
             f"'{incidente_camino}'"
         )
 
@@ -238,7 +240,7 @@ elif menu == "Escudo y memoria":
     else:
       st.warning("Por favor ingrese un destino válido para iniciar el análisis.")
 
-# --- VISTA: ESCÁNER TÁCTICO PRO (ANÁLISIS AUTOMÁTICO DE FOTO) ---
+# --- VISTA: ESCÁNER TÁCTICO PRO ---
 elif menu == "Escáner táctico Pro":
   st.title("📷 Escáner táctico Pro")
   st.markdown(
@@ -274,7 +276,7 @@ elif menu == "Escáner táctico Pro":
         " de visión artificial analice los componentes de inmediato."
     )
 
-# --- VISTA: TRIAJE Y ALERTA SOS (VOZ, GRAVEDAD AUTOMÁTICA Y RECETAS) ---
+# --- VISTA: TRIAJE Y ALERTA SOS ---
 elif menu == "Triaje y Alerta SOS":
   st.title("🚨 Triaje y Alerta SOS")
   st.markdown(
@@ -282,7 +284,6 @@ elif menu == "Triaje y Alerta SOS":
       " recetas y alertas automáticas de ubicación."
   )
 
-  # Configuración personalizable y editable del número de emergencia SOS
   if "contacto_sos" not in st.session_state:
     st.session_state.contacto_sos = "+51 900000000"
 
@@ -304,7 +305,6 @@ elif menu == "Triaje y Alerta SOS":
       "🎙️ **Seleccione método de entrada:** Puede escribir los síntomas o"
       " activar el comando de voz del dispositivo."
   )
-
   modo_entrada = st.radio(
       "Método de reporte:", ["Escribir síntoma", "🎤 Dictar Comando de Voz"]
   )
@@ -335,7 +335,6 @@ elif menu == "Triaje y Alerta SOS":
     if sintoma_reporte:
       texto_analisis = sintoma_reporte.lower()
 
-      # GRAVEDAD CALCULADA 100% DE MANERA AUTOMÁTICA SEGÚN LOS SÍNTOMAS
       if (
           "pecho" in texto_analisis
           or "inconsciente" in texto_analisis
@@ -358,7 +357,6 @@ elif menu == "Triaje y Alerta SOS":
           unsafe_allow_html=True,
       )
 
-      # RESPUESTA AUTOMÁTICA SEGÚN LA GRAVEDAD DETECTADA
       if es_grave:
         st.error(
             "🚨 **¡ALERTA SOS AUTOMÁTICA ACTIVADA POR GRAVEDAD CRÍTICA!**"
