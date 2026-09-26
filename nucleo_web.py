@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import uuid
 import streamlit as st
 
 # Configuración de la página táctica
@@ -20,22 +21,32 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# --- SISTEMA DE LICENCIAS (GUARDADO EN MEMORIA DE SESIÓN) ---
+# --- SISTEMA DE LICENCIAS Y VINCULACIÓN ---
 CLAVE_MAESTRA = "ADMIN_RAEDCO_2026"  # Tu contraseña secreta de administrador
 
-# Inicializar la lista de licencias en la sesión para que no se borren al editar
+# Inicializar base de datos de licencias en la sesión
 if "licencias_db" not in st.session_state:
   st.session_state.licencias_db = {
       "NV-MASTER-2026": "2099-12-31",  # Tu llave maestra permanente
-      "NV-OPERADOR-01": "2026-10-15",  # Llave de ejemplo con caducidad
+      "NV-OPERADOR-01": "2026-10-15",  # Llave de ejemplo
   }
 
+# Diccionario para almacenar qué dispositivo usa qué llave: { "TOKEN": "ID_DE_DISPOSITIVO" }
+if "licencias_vinculos" not in st.session_state:
+  st.session_state.licencias_vinculos = {}
 
-def verificar_acceso(token):
+# Asignar un ID único al dispositivo actual si no lo tiene en la URL
+if "device" not in st.query_params:
+  st.query_params["device"] = str(uuid.uuid4())[:8]
+
+dispositivo_actual = st.query_params["device"]
+
+
+def verificar_acceso(token, dispositivo):
   if not token:
     return False, "Por favor ingrese una clave de acceso."
 
-  # Verificar si es la clave maestra de administración
+  # Verificar si es la clave maestra de administración (puede usarse en cualquier lado por ti)
   if token == CLAVE_MAESTRA:
     return True, "MASTER"
 
@@ -45,31 +56,46 @@ def verificar_acceso(token):
     fecha_exp = datetime.strptime(fecha_exp_str, "%Y-%m-%d").date()
     hoy = datetime.now().date()
 
-    if hoy <= fecha_exp:
-      return True, "USUARIO"
-    else:
+    # Validar caducidad por fecha
+    if hoy > fecha_exp:
       return (
           False,
           f"⚠️ La llave ingresada ha caducado el {fecha_exp_str}. Contacte al"
           " administrador.",
       )
+
+    # Validar vinculación de dispositivo (Antifraude)
+    if token in st.session_state.licencias_vinculos:
+      if st.session_state.licencias_vinculos[token] != dispositivo:
+        return (
+            False,
+            "❌ Esta llave ya se encuentra registrada y en uso en otro"
+            " dispositivo diferente.",
+        )
+    else:
+      # Si la llave es válida y no estaba vinculada, la amarramos a este dispositivo
+      st.session_state.licencias_vinculos[token] = dispositivo
+
+    return True, "USUARIO"
   else:
     return False, "❌ Clave de acceso inválida o no autorizada."
 
 
 # --- PERSISTENCIA AUTOMÁTICA EN EL DISPOSITIVO ---
-query_params = st.query_params
-token_guardado = query_params.get("token", None)
+token_guardado = st.query_params.get("token", None)
 
 if "autenticado" not in st.session_state:
   st.session_state.autenticado = False
   st.session_state.tipo_usuario = None
 
   if token_guardado:
-    valido, tipo = verificar_acceso(token_guardado)
+    valido, tipo = verificar_acceso(token_guardado, dispositivo_actual)
     if valido:
       st.session_state.autenticado = True
       st.session_state.tipo_usuario = tipo
+    else:
+      # Si el token guardado ya no es válido o cambió de dispositivo, se limpia
+      st.query_params.pop("token", None)
 
 # --- PANTALLA DE BLOQUEO / LOGIN ---
 if not st.session_state.autenticado:
@@ -87,13 +113,13 @@ if not st.session_state.autenticado:
   col1, col2, col3 = st.columns([1, 2, 1])
   with col2:
     st.info(
-        "Ingrese su llave de autorización por única vez. Quedará registrada"
-        " en su dispositivo."
+        "Ingrese su llave de autorización. Quedará vinculada de forma única a"
+        " este dispositivo."
     )
     token_ingresado = st.text_input("🔑 Llave de Acceso", type="password")
 
-    if st.button("Validar y Recordar Dispositivo", use_container_width=True):
-      valido, mensaje = verificar_acceso(token_ingresado)
+    if st.button("Validar y Vincular Dispositivo", use_container_width=True):
+      valido, mensaje = verificar_acceso(token_ingresado, dispositivo_actual)
       if valido:
         st.query_params["token"] = token_ingresado
         st.session_state.autenticado = True
@@ -115,41 +141,54 @@ else:
   menu = "Centro de Mando"
 
 if st.sidebar.button("🔒 Olvidar Dispositivo / Cerrar Sesión"):
-  st.query_params.clear()
+  st.query_params.pop("token", None)
   st.session_state.autenticado = False
   st.session_state.tipo_usuario = None
   st.rerun()
 
-# --- VISTA: PANEL MAESTRO (ADMINISTRACIÓN VISUAL) ---
+# --- VISTA: PANEL MAESTRO ---
 if menu == "Panel Maestro (Licencias)":
-  st.title("⚙️ Panel de Control Maestro - Gestión de Licencias")
+  st.title("⚙️ Panel de Control Maestro - Gestión Antifraude")
   st.write(
-      "Comandante, aquí puede administrar, extender o revocar las licencias de"
-      " sus usuarios visualmente."
+      "Comandante, aquí controla las licencias, fechas y la vinculación de"
+      " equipos."
   )
 
-  st.subheader("📋 Licencias Activas y Edición de Fechas")
+  st.subheader("📋 Licencias, Fechas y Dispositivos Vinculados")
 
-  # Listar y permitir editar o borrar cada llave directamente
   for llave, exp_str in list(st.session_state.licencias_db.items()):
-    col1, col2, col3 = st.columns([2, 2, 1])
+    col1, col2, col3, col4 = st.columns([2, 2, 1, 1])
     with col1:
       st.write(f"🔑 **{llave}**")
+      # Mostrar si la llave está vinculada a un celular
+      vinculado = st.session_state.licencias_vinculos.get(llave, "No vinculada")
+      st.caption(
+          f"Estado: {'📱 Vinculada' if vinculado != 'No vinculada' else '🟢 Libre'}"
+      )
     with col2:
-      # Permitir cambiar la fecha directamente seleccionándola en un calendario visual
       fecha_actual_obj = datetime.strptime(exp_str, "%Y-%m-%d").date()
       nueva_fecha_obj = st.date_input(
           f"Expira ({llave})", value=fecha_actual_obj, key=f"date_{llave}"
       )
-      # Actualizar si cambia la fecha
       st.session_state.licencias_db[llave] = nueva_fecha_obj.strftime(
           "%Y-%m-%d"
       )
     with col3:
       st.write("")
       st.write("")
-      if llave != "NV-MASTER-2026":  # Evitar borrar tu llave maestra por accidente
+      # Botón para liberar el dispositivo si el usuario cambia de celular
+      if llave in st.session_state.licencias_vinculos:
+        if st.button("🔄 Liberar", key=f"unb_{llave}" , help="Desata la llave de este celular para que pueda usarse en otro"):
+          del st.session_state.licencias_vinculos[llave]
+          st.success(f"Llave '{llave}' liberada.")
+          st.rerun()
+    with col4:
+      st.write("")
+      st.write("")
+      if llave != "NV-MASTER-2026":
         if st.button("🗑️ Revocar", key=f"del_{llave}"):
+          if llave in st.session_state.licencias_vinculos:
+            del st.session_state.licencias_vinculos[llave]
           del st.session_state.licencias_db[llave]
           st.rerun()
 
