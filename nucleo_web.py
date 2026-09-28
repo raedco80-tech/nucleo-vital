@@ -172,84 +172,101 @@ elif menu == "Escudo y memoria":
       st.warning("Por favor ingrese un destino válido.")
 
 # ==========================================
-# VISTA: ESCÁNER TÁCTICO PRO (DINÁMICO Y EQUILIBRADO)
+# VISTA: ESCÁNER TÁCTICO PRO (NORMATIVA INTERNACIONAL)
 # ==========================================
 elif menu == "Escáner táctico Pro":
     st.markdown("### 📷 Escáner Táctico Pro - Análisis Nutricional")
-    st.write("Análisis inteligente de etiquetas y perfiles nutricionales basado en normativas sanitarias vigentes.")
+    st.write("Evaluación toxicológica y nutricional basada estrictamente en los ingredientes declarados y estándares sanitarios internacionales.")
     
-    # Permitir al usuario elegir si desea subir foto o ingresar texto si prefiere respaldo
-    metodo = st.radio("Seleccione método:", ["Escanear Etiqueta (Foto)", "Ingresar Ingredientes Manualmente"])
+    archivo_foto = st.file_uploader("Cargue o tome la foto de la etiqueta del producto", type=["jpg", "jpeg", "png", "webp"])
     
-    texto_analisis = ""
-    if metodo == "Escanear Etiqueta (Foto)":
-        archivo_foto = st.file_uploader("Cargue o tome la foto de la etiqueta nutricional", type=["jpg", "jpeg", "png", "webp"])
-        if archivo_foto is not None:
-            st.image(archivo_foto, caption="Etiqueta analizada")
-            # Campo editable inteligente que extrae o permite verificar el texto detectado de la etiqueta
-            texto_analisis = st.text_area(
-                "Ingredientes detectados en la etiqueta (verifique o ajuste si es necesario):", 
-                value="harina de trigo enriquecida, azúcar, aceite vegetal, grasa animal, almidón, sal, lecitina de soya, saborizante artificial, bicarbonato de sodio",
-                placeholder="Ej: harina, azúcar, grasa, cacao, etc."
-            )
-    else:
-        texto_analisis = st.text_area("Ingrese la lista de ingredientes del producto:", placeholder="Ej: Avena integral, pasas, almendras, miel...")
+    if archivo_foto is not None:
+        st.image(archivo_foto, caption="Etiqueta del producto cargada")
+        
+    # Campo completamente limpio y neutral para ingresar los ingredientes leídos de la etiqueta
+    texto_ingredientes = st.text_area(
+        "Ingrese la lista completa de ingredientes tal como figura en la etiqueta:", 
+        value="",
+        placeholder="Ej: Harina de trigo enriquecida, azúcar, grasa vegetal interesterificada, sal, lecitina de soya..."
+    )
     
-    if st.button("🔍 Ejecutar Evaluación Nutricional"):
-        if not texto_analisis.strip():
-            st.warning("⚠️ Por favor cargue una imagen o ingrese los ingredientes.")
+    if st.button("🔍 Ejecutar Diagnóstico Sanitario"):
+        if not texto_ingredientes.strip():
+            st.warning("⚠️ Por favor ingrese los ingredientes para realizar el análisis técnico.")
         else:
-            with st.spinner("Evaluando composición según normativas sanitarias..."):
-                t_lower = texto_analisis.lower()
+            with st.spinner("Procesando ingredientes bajo normativas internacionales de salud..."):
+                t_lower = texto_ingredientes.lower()
                 
-                # Listas de referencia para clasificación sanitaria internacional y balance
-                positivos = ["fibra", "integral", "avena", "fruta", "proteína", "vitamina", "mineral", "aceite de oliva", "almendra", "quinua", "chía", "cacao natural"]
-                moderados = ["azúcar", "sal", "sodio", "aceite vegetal", "harina refinada", "almidón", "grasa vegetal"]
-                precaucion = ["grasas trans", "hidrogenada", "sintético", "colorante artificial", "jarabe de alta fructosa", "conservante químico", "bha", "bht"]
+                # Base de datos basada en Normativa Sanitaria Internacional (OMS/OPS y Codex Alimentarius)
+                # 1. Alertas críticas / Nutrientes críticos en exceso o aditivos de precaución
+                criticos_salud = [
+                    "grasas trans", "parcialmente hidrogenada", "totalmente hidrogenada", 
+                    "jarabe de alta fructosa", "jarabe de maiz", "fructosa añadida",
+                    "colorante artificial", "tartrazina", "amarillo n 5", "rojo allura",
+                    "glutamato monosódico", "bha", "bht", "benzoato de sodio",
+                    "aceite vegetal interesterificado"
+                ]
                 
-                p_pos = [i for i in positivos if i in t_lower]
-                p_mod = [i for i in moderados if i in t_lower]
-                p_prec = [i for i in precaucion if i in t_lower]
+                # 2. Componentes de moderación (Azúcares libres, sodio, grasas saturadas base)
+                moderados = [
+                    "azúcar", "sacarosa", "jarabe", "miel", "panela", 
+                    "sal", "cloruro de sodio", "sodio", 
+                    "grasa vegetal", "aceite vegetal", "manteca",
+                    "harina refinada", "almidón modificado"
+                ]
+                
+                # 3. Componentes protectores o favorables
+                favorables = [
+                    "fibra", "integral", "avena", "quinua", "chía", "kiwicha",
+                    "grano entero", "fruta natural", "cacao natural", 
+                    "proteína de soya", "aceite de oliva"
+                ]
+                
+                # Conteo de coincidencias en los ingredientes ingresados
+                detectados_criticos = [i for i in criticos_salud if i in t_lower]
+                detectados_moderados = [i for i in moderados if i in t_lower]
+                detectados_favorables = [i for i in favorables if i in t_lower]
                 
                 st.markdown("---")
-                st.subheader("📊 Dictamen Sanitario y Perfil Nutricional")
+                st.subheader("📊 Dictamen Sanitario Oficial")
                 
-                # Criterio de evaluación equilibrado
-                if len(p_prec) > 0:
-                    st.error("⚠️ **Clasificación: Consumo Ocasional / Precaución Sanitaria**")
-                    st.write("El producto contiene aditivos o componentes grasos/azucarados que deben limitarse según pautas de salud pública.")
-                elif len(p_mod) > 2 and len(p_pos) == 0:
-                    st.warning("⚡ **Clasificación: Moderado / Procesado**")
-                    st.write("Presenta un balance calórico estándar; se recomienda moderar la porción dentro de la dieta diaria.")
+                # Criterio de evaluación basado estricta y únicamente en los ingredientes
+                if len(detectados_criticos) > 0 or "grasas trans" in t_lower:
+                    st.error("⚠️ **Clasificación: Consumo Ocasional / Alerta Sanitaria**")
+                    st.write("El producto declara componentes o aditivos sujetos a restricciones por organizaciones internacionales de salud debido a su impacto metabólico a largo plazo.")
+                elif len(detectados_moderados) > 2 and len(detectados_favorables) == 0:
+                    st.warning("⚡ **Clasificación: Alimento Procesado (Moderación Requerida)**")
+                    st.write("Contiene concentraciones importantes de azúcares libres, sodio o grasas refinadas. Se recomienda consumo moderado dentro de una dieta equilibrada.")
                 else:
                     st.success("✅ **Clasificación: Perfil Nutricional Favorable**")
-                    st.write("El producto muestra componentes con aportes nutricionales adecuados y menor presencia de aditivos críticos.")
+                    st.write("La formulación presenta componentes de mejor calidad nutricional y menor presencia de aditivos críticos según los estándares evaluados.")
                 
-                # Desglose en tres columnas
-                col1, col2, col3 = st.columns(3)
-                with col1:
-                    st.markdown("🟢 **Componentes Favorables**")
-                    if p_pos:
-                        for item in p_pos:
-                            st.write(f"- {item.capitalize()}: Aporte nutricional positivo.")
+                # Desglose analítico por categorías
+                c1, c2, c3 = st.columns(3)
+                
+                with c1:
+                    st.markdown("🟢 **Aportes Favorables**")
+                    if detectados_favorables:
+                        for item in detectados_favorables:
+                            st.write(f"- {item.capitalize()}: Elemento protector o nutritivo.")
                     else:
-                        st.write("Sin elementos protectores primarios relevantes.")
+                        st.write("Sin componentes protectores destacados en la fórmula.")
                         
-                with col2:
-                    st.markdown("🟡 **A Moderar / Balance**")
-                    if p_mod:
-                        for item in p_mod:
-                            st.write(f"- {item.capitalize()}: Vigilar porción y frecuencia.")
+                with c2:
+                    st.markdown("🟡 **Nutrientes a Moderar**")
+                    if detectados_moderados:
+                        for item in detectados_moderados:
+                            st.write(f"- {item.capitalize()}: Azúcar, sal o grasa refinada base.")
                     else:
-                        st.write("niveles moderados de condimentos base.")
+                        st.write("Baja presencia de azúcares o sodio detectados.")
                         
-                with col3:
-                    st.markdown("🔴 **Alertas / Precauciones**")
-                    if p_prec:
-                        for item in p_prec:
-                            st.write(f"- {item.capitalize()}: Componente sujeto a restricción sanitaria.")
+                with c3:
+                    st.markdown("🔴 **Alertas Sanitarias / Aditivos**")
+                    if detectados_criticos:
+                        for item in detectados_criticos:
+                            st.write(f"- {item.capitalize()}: Requiere precaución según directrices de salud.")
                     else:
-                        st.write("Sin alertas críticas por aditivos severos.")
+                        st.write("Sin alertas críticas por aditivos severos o grasas trans.")
 # --- VISTA: TRIAJE Y ALERTA SOS ---
 elif menu == "Triaje y Alerta SOS":
   st.title("🚨 Triaje y Alerta SOS")
