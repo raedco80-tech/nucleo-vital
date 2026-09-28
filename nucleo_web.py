@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 import uuid
 import streamlit as st
-
+from PIL import Image
 # Configuración de la página táctica
 st.set_page_config(
     page_title="Núcleo Vital - Centro de Mando",
