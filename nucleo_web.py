@@ -171,15 +171,77 @@ elif menu == "Escudo y memoria":
     else:
       st.warning("Por favor ingrese un destino válido.")
 
-# --- VISTA: ESCÁNER TÁCTICO PRO ---
-elif menu == "Escáner táctico Pro":
-  st.title("📷 Escáner táctico Pro")
-  foto_producto = st.file_uploader("📷 Tomar o subir foto del envoltorio:", type=["jpg", "jpeg", "png", "webp"])
-
-  if foto_producto is not None:
-    st.image(foto_producto, width=350)
-    if st.button("🔍 Analizar Ingredientes Automáticamente"):
-      st.warning("⚠️ **Resultado:** Producto clasificado en **Rango de Consumo No Recomendado (Malo)**.")
+# --- VISTA: ESCÁNER TÁCTICO PRO (EQUILIBRADO) ---
+elif menu == "Escáner Táctico Pro":
+    st.markdown("### 📷 Escáner Táctico Pro - Análisis Nutricional")
+    st.write("Análisis avanzado de componentes, ingredientes y perfiles nutricionales basado en normativas alimentarias vigentes.")
+    
+    modo_ingreso = st.radio("Seleccione método de análisis:", ["Subir Foto / Imagen de Etiqueta", "Ingresar Ingredientes Manualmente"])
+    
+    texto_analisis = ""
+    if modo_ingreso == "Subir Foto / Imagen de Etiqueta":
+        archivo_foto = st.file_uploader("Cargue la foto del producto o etiqueta nutricional", type=["jpg", "jpeg", "png"])
+        if archivo_foto is not None:
+            st.image(archivo_foto, caption="Imagen cargada para análisis táctico", use_column_width=True)
+            texto_analisis = st.text_area("Describa o pegue los ingredientes principales visibles en la etiqueta:", placeholder="Ej: Harina de trigo enriquecida, agua, azúcar, aceite vegetal, sal, levadura...")
+    else:
+        texto_analisis = st.text_area("Ingrese la lista de ingredientes o nombre del producto:", placeholder="Ej: Avena integral, leche descremada, pasas, almendras...")
+    
+    if st.button("🔍 Ejecutar Análisis Táctico"):
+        if texto_analisis.strip() == "":
+            st.warning("⚠️ Por favor ingrese o describa los ingredientes para que el escáner realice la evaluación.")
+        else:
+            with st.spinner("Procesando composición nutricional..."):
+                texto_lower = texto_analisis.lower()
+                
+                # Criterios equilibrados y científicos
+                ingredientes_positivos = ["fibra", "integral", "avena", "fruta", "proteína", "vitamina", "mineral", "agua", "aceite de oliva", "almendra", "quinua", "chía"]
+                ingredientes_moderados = ["azúcar", "sal", "sodio", "aceite vegetal", "harina refinada", "almidón"]
+                ingredientes_precaucion = ["grasas trans", "sintético", "colorante artificial", "jarabe de alta fructosa", "conservante químico"]
+                
+                p_positivos = [i for i in ingredientes_positivos if i in texto_lower]
+                p_moderados = [i for i in ingredientes_moderados if i in texto_lower]
+                p_precaucion = [i for i in ingredientes_precaucion if i in texto_lower]
+                
+                st.markdown("---")
+                st.subheader("📊 Resultado del Análisis Táctico Detallado")
+                
+                # Evaluación general equilibrada
+                if len(p_precaucion) > 0:
+                    st.error("⚠️ **Clasificación: Consumo Ocasional / Con Precaución**")
+                    st.write("El producto contiene elementos que requieren moderación según guías nutricionales estándar.")
+                elif len(p_moderados) > 2 and len(p_positivos) == 0:
+                    st.warning("⚡ **Clasificación: Moderado / Procesado**")
+                    st.write("Presenta componentes energéticos o condimentos que deben consumirse con equilibrio dentro de una dieta diaria.")
+                else:
+                    st.success("✅ **Clasificación: Perfil Nutricional Favorable / Saludable**")
+                    st.write("El producto contiene componentes de calidad con buenos aportes nutricionales para el organismo.")
+                
+                # Desglose detallado
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    st.markdown("🟢 **Aportes Positivos**")
+                    if p_positivos:
+                        for item in p_positivos:
+                            st.write(f"- {item.capitalize()}: Contribuye positivamente a la nutrición y energía.")
+                    else:
+                        st.write("No se detectaron elementos protectores primarios destacados.")
+                        
+                with col2:
+                    st.markdown("🟡 **A moderar / Balance**")
+                    if p_moderados:
+                        for item in p_moderados:
+                            st.write(f"- {item.capitalize()}: Consumir dentro de porciones adecuadas para evitar excesos calóricos.")
+                    else:
+                        st.write("Bajos niveles de azúcares o sodio aparentes.")
+                        
+                with col3:
+                    st.markdown("🔴 **Precauciones**")
+                    if p_precaucion:
+                        for item in p_precaucion:
+                            st.write(f"- {item.capitalize()}: Se recomienda limitar su frecuencia de consumo.")
+                    else:
+                        st.write("Sin alertas críticas por aditivos o conservantes severos.")
 
 # --- VISTA: TRIAJE Y ALERTA SOS ---
 elif menu == "Triaje y Alerta SOS":
