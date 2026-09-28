@@ -184,7 +184,7 @@ elif menu == "Escáner táctico Pro":
     if modo_ingreso == "Subir Foto / Imagen de Etiqueta":
         archivo_foto = st.file_uploader("Cargue la foto del producto o etiqueta nutricional", type=["jpg", "jpeg", "png", "webp"])
         if archivo_foto is not None:
-            st.image(archivo_foto, caption="Imagen cargada para análisis táctico", use_column_width=True)
+            st.image(archivo_foto, caption="Imagen cargada para análisis táctico")
             texto_analisis = st.text_area("Describa o pegue los ingredientes principales visibles en la etiqueta:", placeholder="Ej: Harina de trigo enriquecida, agua, azúcar, aceite vegetal, sal, levadura...")
     else:
         texto_analisis = st.text_area("Ingrese la lista de ingredientes o nombre del producto:", placeholder="Ej: Avena integral, leche descremada, pasas, almendras...")
