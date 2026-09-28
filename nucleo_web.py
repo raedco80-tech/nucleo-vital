@@ -171,8 +171,10 @@ elif menu == "Escudo y memoria":
     else:
       st.warning("Por favor ingrese un destino válido.")
 
-# --- VISTA: ESCÁNER TÁCTICO PRO (EQUILIBRADO) ---
-elif menu == "Escáner Táctico Pro":
+# ==========================================
+# VISTA: ESCÁNER TÁCTICO PRO (EQUILIBRADO)
+# ==========================================
+elif menu == "Escáner táctico Pro":
     st.markdown("### 📷 Escáner Táctico Pro - Análisis Nutricional")
     st.write("Análisis avanzado de componentes, ingredientes y perfiles nutricionales basado en normativas alimentarias vigentes.")
     
@@ -180,7 +182,7 @@ elif menu == "Escáner Táctico Pro":
     
     texto_analisis = ""
     if modo_ingreso == "Subir Foto / Imagen de Etiqueta":
-        archivo_foto = st.file_uploader("Cargue la foto del producto o etiqueta nutricional", type=["jpg", "jpeg", "png"])
+        archivo_foto = st.file_uploader("Cargue la foto del producto o etiqueta nutricional", type=["jpg", "jpeg", "png", "webp"])
         if archivo_foto is not None:
             st.image(archivo_foto, caption="Imagen cargada para análisis táctico", use_column_width=True)
             texto_analisis = st.text_area("Describa o pegue los ingredientes principales visibles en la etiqueta:", placeholder="Ej: Harina de trigo enriquecida, agua, azúcar, aceite vegetal, sal, levadura...")
@@ -242,7 +244,6 @@ elif menu == "Escáner Táctico Pro":
                             st.write(f"- {item.capitalize()}: Se recomienda limitar su frecuencia de consumo.")
                     else:
                         st.write("Sin alertas críticas por aditivos o conservantes severos.")
-
 # --- VISTA: TRIAJE Y ALERTA SOS ---
 elif menu == "Triaje y Alerta SOS":
   st.title("🚨 Triaje y Alerta SOS")
