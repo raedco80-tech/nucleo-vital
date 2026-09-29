@@ -172,86 +172,110 @@ elif menu == "Escudo y memoria":
       st.warning("Por favor ingrese un destino válido.")
 
 elif menu == "Escáner táctico Pro":
-    # Base de datos interna del escáner (autocontenida para no romper nada más)
+    # ==========================================
+    # BASE DE DATOS INTERNA (AUTOCONTENIDA)
+    # ==========================================
     BASE_INGREDIENTES_MAESTRA = {
-        "tongkat": {"categoria": "Suplemento Adaptógeno", "clasificacion": "Favorable / Uso Específico", "dictamen": "Extracto herbal adaptógeno para rendimiento físico. Seguro bajo pautas estándar de consumo.", "recomendacion": "Respetar las dosis recomendadas."},
-        "tribulus": {"categoria": "Suplemento Herbal", "clasificacion": "Favorable / Uso Específico", "dictamen": "Soporte herbal tradicional con perfil toxicológico favorable en adultos sanos.", "recomendacion": "Apto cumpliendo porciones indicadas."},
-        "coca": {"categoria": "Bebida Carbonatada", "clasificacion": "Precaución / Alerta Sanitaria", "dictamen": "Presencia de azúcares libres y jarabe de alta fructosa vinculados a picos glucémicos según la OMS.", "recomendacion": "Limitar drásticamente su frecuencia de consumo."},
-        "pepsi": {"categoria": "Bebida Carbonatada", "clasificacion": "Precaución / Alerta Sanitaria", "dictamen": "Alta carga de azúcares libres, cafeína y ácidos que alteran el balance metabólico.", "recomendacion": "Restringir su consumo habitual."},
-        "gaseosa": {"categoria": "Bebida Azucarada", "clasificacion": "Precaución / Alerta Sanitaria", "dictamen": "Bebida ultraprocesada con alto contenido calórico vacío y ácidos conservantes.", "recomendacion": "Evitar el consumo frecuente o diario."},
-        "galleta": {"categoria": "Snack Procesado", "clasificacion": "Moderación Requerida", "dictamen": "Elaborado con harinas refinadas y azúcares añadidos que aportan densidad calórica sin fibra.", "recomendacion": "Consumir de manera ocasional."},
-        "snack": {"categoria": "Alimento Ultraprocesado", "clasificacion": "Moderación Requerida", "dictamen": "Presencia de grasas modificadas y sodio elevado.", "recomendacion": "Limitar su ingesta."},
-        "leche": {"categoria": "Lácteo Base", "clasificacion": "Favorable / Nutritivo", "dictamen": "Aporte natural de calcio y proteínas de alto valor biológico.", "recomendacion": "Apto para la dieta diaria."},
-        "hot dog": {"categoria": "Embutido Cárnico Proceso", "clasificacion": "Precaución / Alerta Sanitaria", "dictamen": "Contiene carnes procesadas, sodio elevado y nitritos como conservantes.", "recomendacion": "Evitar el consumo frecuente."},
-        "atun": {"categoria": "Conserva Marina", "clasificacion": "Favorable / Alto Valor Nutricional", "dictamen": "Excelente fuente de ácidos grasos Omega-3 y proteínas magras.", "recomendacion": "Altamente recomendado."},
-        "quinua": {"categoria": "Pseudocereal Andino", "clasificacion": "Favorable / Alto Valor Nutricional", "dictamen": "Grano integral rico en aminoácidos esenciales y fibra.", "recomendacion": "Ideal para incorporar regularmente."},
-        "maca": {"categoria": "Raíz Adaptógena", "clasificacion": "Favorable / Suplemento Energético", "dictamen": "Tubérculo andino con propiedades vigorizantes.", "recomendacion": "Consumir preferentemente en las mañanas."},
-        "crema": {"categoria": "Dermocosmético / Hidratante", "clasificacion": "Favorable / Cuidado Corporal", "dictamen": "Formulación tópica orientada a retener la humedad cutánea.", "recomendacion": "Apto para uso diario."},
-        "shampoo": {"categoria": "Higiene Capilar", "clasificacion": "Moderación Requerida", "dictamen": "Contiene tensioactivos limpiadores que pueden resecar si son agresivos.", "recomendacion": "Verificar tolerancia."},
-        "dental": {"categoria": "Higiene Bucal", "clasificacion": "Favorable / Protección Específica", "dictamen": "Combina abrasivos suaves y fluoruro de sodio para fortalecer el esmalte.", "recomendacion": "Uso diario obligatorio."}
+        # 1. SUPLEMENTOS Y BEBIDAS
+        "tongkat": {"categoria": "Suplemento", "clasificacion": "Favorable", "dictamen": "Adaptógeno para rendimiento físico.", "recomendacion": "Respetar dosis."},
+        "tribulus": {"categoria": "Suplemento Herbal", "clasificacion": "Favorable / Uso Específico", "dictamen": "Soporte herbal tradicional. Seguro en adultos sanos.", "recomendacion": "Apto cumpliendo porciones."},
+        "coca": {"categoria": "Bebida Carbonatada", "clasificacion": "Precaución / Alerta Sanitaria", "dictamen": "Alta carga de azúcares libres y jarabe de alta fructosa.", "recomendacion": "Limitar drásticamente."},
+        "pepsi": {"categoria": "Bebida Carbonatada", "clasificacion": "Precaución / Alerta Sanitaria", "dictamen": "Alta en azúcares, ácidos y cafeína.", "recomendacion": "Restringir consumo habitual."},
+        "gaseosa": {"categoria": "Bebida Azucarada", "clasificacion": "Precaución / Alerta Sanitaria", "dictamen": "Bebida ultraprocesada, calorías vacías.", "recomendacion": "Evitar consumo frecuente."},
+        
+        # 2. ALIMENTOS Y SNACKS
+        "galleta": {"categoria": "Snack Procesado", "clasificacion": "Moderación Requerida", "dictamen": "Harinas refinadas y azúcares añadidos.", "recomendacion": "Consumo ocasional."},
+        "snack": {"categoria": "Ultraprocesado", "clasificacion": "Moderación Requerida", "dictamen": "Exceso de sodio y grasas modificadas.", "recomendacion": "Limitar ingesta."},
+        "leche": {"categoria": "Lácteo Base", "clasificacion": "Favorable / Nutritivo", "dictamen": "Aporte natural de calcio y proteínas.", "recomendacion": "Apto para dieta diaria."},
+        "hot dog": {"categoria": "Embutido Cárnico", "clasificacion": "Precaución / Alerta Sanitaria", "dictamen": "Carnes procesadas con nitritos y exceso de sodio.", "recomendacion": "Evitar consumo frecuente."},
+        "atun": {"categoria": "Conserva Marina", "clasificacion": "Favorable / Nutritivo", "dictamen": "Fuente de Omega-3 y proteínas.", "recomendacion": "Altamente recomendado."},
+        "quinua": {"categoria": "Cereal Andino", "clasificacion": "Favorable / Nutritivo", "dictamen": "Rico en aminoácidos esenciales.", "recomendacion": "Consumo regular."},
+        "maca": {"categoria": "Raíz Adaptógena", "clasificacion": "Favorable / Energético", "dictamen": "Tubérculo con propiedades vigorizantes.", "recomendacion": "Preferente en mañanas."},
+
+        # 3. HIGIENE Y COSMÉTICA
+        "crema": {"categoria": "Dermocosmético", "clasificacion": "Favorable / Seguro", "dictamen": "Retiene la humedad cutánea.", "recomendacion": "Apto para uso diario."},
+        "shampoo": {"categoria": "Higiene Capilar", "clasificacion": "Moderación Requerida", "dictamen": "Contiene tensioactivos que pueden resecar.", "recomendacion": "Verificar tolerancia."},
+        "dental": {"categoria": "Higiene Bucal", "clasificacion": "Favorable / Seguro", "dictamen": "Abrasivos suaves y fluoruro para el esmalte.", "recomendacion": "Uso diario obligatorio."},
+        "aluminio": {"categoria": "Antitranspirante", "clasificacion": "Precaución / Monitoreo", "dictamen": "Bloquea conductos sudoríparos. Posible acumulación.", "recomendacion": "Alternar con desodorantes libres de aluminio."},
+        "triclosan": {"categoria": "Antibacteriano", "clasificacion": "Precaución / Alerta Sanitaria", "dictamen": "Asociado a alteración endocrina y resistencia bacteriana.", "recomendacion": "Evitar productos que lo contengan."},
+        "alcohol denat": {"categoria": "Solvente Cosmético", "clasificacion": "Moderación Requerida", "dictamen": "Seca rápido pero irrita pieles sensibles.", "recomendacion": "Evitar en piel atópica."},
+        "parabenos": {"categoria": "Conservante", "clasificacion": "Precaución / Monitoreo", "dictamen": "Asociados a disrupción endocrina leve.", "recomendacion": "Buscar opciones 'Libre de parabenos'."},
+        "fragancia": {"categoria": "Aromatizante", "clasificacion": "Moderación Requerida", "dictamen": "Puede contener alérgenos que causan dermatitis.", "recomendacion": "Vigilar reacciones en la piel."},
+
+        # 4. BEBÉS E INFANTIL
+        "cocamidopropil betaina": {"categoria": "Limpiador Suave", "clasificacion": "Favorable / Seguro", "dictamen": "Tensioactivo derivado del coco, ideal para piel sensible.", "recomendacion": "Excelente para higiene infantil."},
+        "fenoxietanol": {"categoria": "Conservante Cosmético", "clasificacion": "Precaución / Monitoreo", "dictamen": "Usado en toallitas húmedas. Puede irritar pieles muy delicadas.", "recomendacion": "Evitar uso excesivo en zonas irritadas."},
+
+        # 5. LIMPIEZA DEL HOGAR Y GARAJE
+        "hipoclorito de sodio": {"categoria": "Desinfectante (Lejía)", "clasificacion": "Peligro / Tóxico por Inhalación", "dictamen": "Altamente corrosivo. Sus gases irritan las vías respiratorias.", "recomendacion": "Usar con guantes, diluido y en áreas ventiladas. NO mezclar."},
+        "amonio cuaternario": {"categoria": "Antibacteriano de Superficies", "clasificacion": "Moderación Requerida", "dictamen": "Eficaz desinfectante, pero causa dermatitis por contacto directo.", "recomendacion": "Mantener lejos de niños y enjuagar superficies."},
+        "acido sulfonico": {"categoria": "Detergente Fuerte", "clasificacion": "Precaución / Irritante", "dictamen": "Desengrasante que destruye la barrera natural de las manos.", "recomendacion": "Usar guantes de goma obligatoriamente."},
+        "ftalatos": {"categoria": "Plastificante / Fragancia", "clasificacion": "Precaución / Alerta Sanitaria", "dictamen": "Disruptor endocrino común en ambientadores sintéticos.", "recomendacion": "Ventilar bien los espacios cerrados."},
+        "metanol": {"categoria": "Solvente Industrial", "clasificacion": "Peligro / Altamente Tóxico", "dictamen": "Alcohol industrial que se absorbe por la piel.", "recomendacion": "Manipular con equipo de protección estricto."}
     }
 
-    st.markdown("### 📷 Escáner Táctico Pro - Inteligencia Sanitaria Integrada")
-    st.write("Sistema autónomo y local con análisis inteligente basado en la base de datos maestra.")
+    # ==========================================
+    # INTERFAZ DE USUARIO: ESCÁNER TÁCTICO PRO
+    # ==========================================
+    st.markdown("### 📷 y 🎙️ Escáner Táctico Pro - Análisis por Voz y Texto")
+    st.write("Sube la imagen del producto como registro y usa el dictado por voz o teclado para analizar los ingredientes reales.")
     
-    archivo_foto = st.file_uploader("Sube o toma la foto de la etiqueta del producto", type=["jpg", "jpeg", "png", "webp"], key="escanner_etiqueta_pro_inteligente")
-    
+    # 1. Carga de imagen (Evidencia visual)
+    archivo_foto = st.file_uploader("1. Sube o toma la foto del producto", type=["jpg", "jpeg", "png", "webp"], key="foto_evidencia")
     if archivo_foto is not None:
         try:
             imagen_pil = Image.open(archivo_foto)
-            imagen_pil.thumbnail((800, 800))
-            st.image(imagen_pil, caption="Etiqueta cargada para evaluación")
-            
-            if st.button("🔍 Ejecutar Dictamen y Análisis Sanitario"):
-                with st.spinner("Analizando componentes y contrastando con normativa internacional..."):
-                    
-                    nombre_archivo = archivo_foto.name.lower()
-                    resultado_encontrado = None
-                    
-                    for clave, datos in BASE_INGREDIENTES_MAESTRA.items():
-                        if clave in nombre_archivo:
-                            resultado_encontrado = datos
-                            resultado_encontrado["detectado"] = clave
-                            break
-                    
-                    if not resultado_encontrado:
-                        tamanio = archivo_foto.size
-                        if tamanio % 2 == 0:
-                            resultado_encontrado = {
-                                "detectado": "Componente Procesado Estándar",
-                                "categoria": "Alimento Envasado General",
-                                "clasificacion": "Moderación Requerida",
-                                "dictamen": "El producto contiene elementos procesados industriales que exigen control periódico en las porciones.",
-                                "recomendacion": "Consumir con moderación dentro de una pauta equilibrada."
-                            }
-                        else:
-                            resultado_encontrado = {
-                                "detectado": "Formulación de Uso Específico",
-                                "categoria": "Suplemento / Derivado Técnico",
-                                "clasificacion": "Favorable / Uso Específico",
-                                "dictamen": "Formulación limpia basada en nutrientes de base sin azúcares críticos ni grasas trans.",
-                                "recomendacion": "Respetar las pautas de ingesta recomendadas."
-                            }
-
-                    st.markdown("---")
-                    st.subheader("📊 Dictamen Sanitario Oficial")
-                    st.info(f"**Elemento clave identificado:** `{resultado_encontrado['detectado'].upper()}` ({resultado_encontrado['categoria']})")
-                    
-                    clasif = resultado_encontrado['clasificacion']
-                    if "Favorable" in clasif:
-                        st.success(f"🟢 **Clasificación: {clasif}**")
-                    elif "Precaución" in clasif or "Alerta" in clasif:
-                        st.error(f"🔴 **Clasificación: {clasif}**")
-                    else:
-                        st.warning(f"🟡 **Clasificación: {clasif}**")
-                    
-                    st.markdown(f"**Análisis Toxicológico / Sanitario:** {resultado_encontrado['dictamen']}")
-                    st.markdown(f"**Recomendación de Uso:** {resultado_encontrado['recomendacion']}")
-                    
+            imagen_pil.thumbnail((400, 400)) # Compresión de seguridad
+            st.image(imagen_pil, caption="Evidencia visual cargada")
         except Exception as err:
-            st.error(f"⚠️ Error al procesar la imagen: {err}")
-    else:
-        st.info("💡 Por favor tome o cargue una foto de la etiqueta para iniciar el análisis automático.")
+            st.error("Error al procesar la imagen.")
+
+    st.markdown("---")
+    
+    # 2. Ingreso por voz/texto
+    st.markdown("#### 🎙️ Lector de Ingredientes")
+    st.info("Escribe los ingredientes o usa el **micrófono de tu teclado** para dictarlos rápidamente.")
+    
+    ingredientes_texto = st.text_area("Ingresa los ingredientes aquí:", height=100, placeholder="Ejemplo: Contiene agua, aluminio, triclosán, metanol...")
+    
+    if st.button("🔍 Analizar Ingredientes Reales"):
+        if ingredientes_texto.strip() == "":
+            st.warning("⚠️ Por favor, dicta o escribe algunos ingredientes antes de analizar.")
+        else:
+            with st.spinner("Analizando componentes toxicológicos..."):
+                texto_minusculas = ingredientes_texto.lower()
+                componentes_hallados = []
+
+                # Búsqueda de coincidencias
+                for clave, datos in BASE_INGREDIENTES_MAESTRA.items():
+                    if clave in texto_minusculas:
+                        datos_encontrados = datos.copy()
+                        datos_encontrados["detectado"] = clave
+                        componentes_hallados.append(datos_encontrados)
+
+                # Despliegue de Resultados
+                st.markdown("---")
+                st.subheader("📊 Reporte Sanitario Oficial")
+                
+                if len(componentes_hallados) > 0:
+                    st.success(f"Se identificaron **{len(componentes_hallados)}** componentes clave:")
+                    
+                    for item in componentes_hallados:
+                        with st.expander(f"📌 {item['detectado'].upper()} ({item['categoria']})", expanded=True):
+                            clasif = item['clasificacion']
+                            
+                            # Asignación de semáforo
+                            if "Favorable" in clasif:
+                                st.success(f"🟢 **Clasificación: {clasif}**")
+                            elif "Peligro" in clasif or "Alerta" in clasif:
+                                st.error(f"🔴 **Clasificación: {clasif}**")
+                            else:
+                                st.warning(f"🟡 **Clasificación: {clasif}**")
+                            
+                            st.write(f"**Dictamen:** {item['dictamen']}")
+                            st.write(f"**Recomendación:** {item['recomendacion']}")
+                else:
+                    st.info("✅ **Análisis completado:** No se detectaron ingredientes críticos o tóxicos en el texto ingresado. El producto posee una formulación no registrada en la base de alertas.")
 elif menu == "Triaje y Alerta SOS":
   st.title("🚨 Triaje y Alerta SOS")
 
