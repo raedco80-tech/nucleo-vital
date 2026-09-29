@@ -172,88 +172,50 @@ elif menu == "Escudo y memoria":
       st.warning("Por favor ingrese un destino válido.")
 
 # ==========================================
-# VISTA: ESCÁNER TÁCTICO PRO (UNIVERSAL Y SEGURO)
+# VISTA: ESCÁNER TÁCTICO PRO (ANÁLISIS VISUAL AUTOMÁTICO REAL)
 # ==========================================
 elif menu == "Escáner táctico Pro":
-    st.markdown("### 📷 Escáner Táctico Pro - Análisis Nutricional Inteligente")
-    st.write("Sistema automatizado de lectura óptica y evaluación sanitaria internacional basada en ingredientes.")
+    st.markdown("### 📷 Escáner Táctico Pro - Análisis Visual Automático")
+    st.write("Sistema inteligente que lee automáticamente los ingredientes de la foto y emite el dictamen sanitario.")
     
     archivo_foto = st.file_uploader("Tome o cargue la foto de la etiqueta o ingredientes del producto", type=["jpg", "jpeg", "png", "webp"])
     
     if archivo_foto is not None:
         imagen_pil = Image.open(archivo_foto)
-        st.image(imagen_pil, caption="Etiqueta cargada para análisis óptico")
+        st.image(imagen_pil, caption="Etiqueta cargada para lectura óptica automática")
         
-        if st.button("🔍 Ejecutar Análisis y Dictamen Sanitario"):
-            with st.spinner("Analizando componentes de la etiqueta bajo normativas internacionales de salud..."):
-                
-                # Extracción óptica adaptativa basada en los elementos visuales y nombre de la foto
-                nombre_archivo = archivo_foto.name.lower()
-                
-                # Extracción inteligente sin alterar la realidad del producto que fotografiaste
-                if any(k in nombre_archivo for k in ["supple", "extract", "caps", "bottle", "pill", "tribulus", "tongkat"]):
-                    ingredientes_extraidos = "Extracto de Tongkat Ali, Extracto de Tribulus Terrestris, Extracto de Pimienta Negra (Bioperine), Harina de arroz, Hipromelosa, Fosfato de calcio, Celulosa microcristalina, Estearato de magnesio, Sílice"
-                elif any(k in nombre_archivo for k in ["coca", "cola", "pepsi", "gaseosa", "drink", "bebida"]):
-                    ingredientes_extraidos = "Agua carbonatada, azúcar, jarabe de alta fructosa, cafeína, ácido fosfórico, benzoato de sodio"
-                elif any(k in nombre_archivo for k in ["galleta", "cookie", "oreo", "dulce", "snack"]):
-                    ingredientes_extraidos = "Harina de trigo enriquecida, azúcar, grasa vegetal hidrogenada, almidón, sal, lecitina de soya, saborizante artificial"
-                else:
-                    # Detección universal estándar para etiquetas de suplementos o alimentos
-                    ingredientes_extraidos = "Extractos herbales estandarizados, agentes de carga inertes (celulosa y harina de arroz), excipientes de grado farmacéutico, minerales de estabilidad"
-                
-                t_lower = ingredientes_extraidos.lower()
-                
-                # Base de datos universal ampliada de ingredientes y su impacto sanitario
-                base_datos = {
-                    "tongkat ali": {"tipo": "Favorable / Adaptógeno", "efecto": "Apoyo energético, rendimiento físico y bienestar hormonal."},
-                    "tribulus terrestris": {"tipo": "Favorable / Extracto Herbal", "efecto": "Soporte para la vitalidad y el rendimiento físico."},
-                    "bioperine": {"tipo": "Favorable / Potenciador", "efecto": "Mejora la biodisponibilidad y absorción de nutrientes."},
-                    "pimienta negra": {"tipo": "Favorable / Potenciador", "efecto": "Estimula la absorción intestinal."},
-                    "harina de arroz": {"tipo": "Neutral / Excipiente", "efecto": "Agente de carga inerte, natural y seguro en cápsulas."},
-                    "hipromelosa": {"tipo": "Neutral / Excipiente", "efecto": "Celulosa vegetal para cápsulas de liberación segura."},
-                    "fosfato de calcio": {"tipo": "Neutral / Mineral", "efecto": "Estabilizante y aporte mineral inocuo."},
-                    "celulosa microcristalina": {"tipo": "Neutral / Excipiente", "efecto": "Fibra vegetal purificada empleada como aglutinante."},
-                    "estearato de magnesio": {"tipo": "Neutral / Lubricante", "efecto": "Agente seguro para asegurar el flujo en la fabricación."},
-                    "sílice": {"tipo": "Neutral / Antiaglomerante", "efecto": "Dióxido de silicio para prevenir humedad."},
-                    "azúcar": {"tipo": "Moderación", "efecto": "Carbohidrato simple; su consumo elevado eleva la glucosa."},
-                    "jarabe de alta fructosa": {"tipo": "Precaución", "efecto": "Endulzante ultraprocesado vinculado a estrés metabólico."},
-                    "grasas trans": {"tipo": "Alerta Crítica", "efecto": "Grasas sintéticas nocivas para el sistema cardiovascular."},
-                    "sodio": {"tipo": "Moderación", "efecto": "Mineral que en exceso eleva la presión arterial."}
-                }
-                
-                hallazgos = []
-                for ing, info in base_datos.items():
-                    if ing in t_lower:
-                        hallazgos.append((ing, info))
-                
-                st.markdown("---")
-                st.subheader("📊 Dictamen Sanitario Oficial")
-                st.info(f"**Ingredientes leídos de la etiqueta:** `{ingredientes_extraidos}`")
-                
-                if hallazgos:
-                    st.markdown("### 🔬 Análisis Detallado por Componente:")
-                    for ing, info in hallazgos:
-                        if "Alerta" in info["tipo"] or "Precaución" in info["tipo"]:
-                            st.error(f"🔴 **{ing.capitalize()}** ({info['tipo']}): {info['efecto']}")
-                        elif "Moderación" in info["tipo"]:
-                            st.warning(f"🟡 **{ing.capitalize()}** ({info['tipo']}): {info['efecto']}")
-                        else:
-                            st.success(f"🟢 **{ing.capitalize()}** ({info['tipo']}): {info['efecto']}")
+        if st.button("🔍 Extraer Ingredientes y Evaluar Automáticamente"):
+            with st.spinner("Analizando la imagen, extrayendo ingredientes y evaluando salud..."):
+                try:
+                    import google.generativeai as genai
                     
-                    # Conclusión final
-                    tiene_alerta = any("Alerta" in d["tipo"] or "Precaución" in d["tipo"] for _, d in hallazgos)
-                    tiene_mod = any("Moderación" in d["tipo"] for _, d in hallazgos)
-                    
-                    st.markdown("---")
-                    st.subheader("💡 Recomendación de Consumo")
-                    if tiene_alerta:
-                        st.error("**Dictamen:** Producto con componentes sujetos a precaución sanitaria. Se sugiere prudencia.")
-                    elif tiene_mod and not tiene_alerta:
-                        st.warning("**Dictamen:** Producto con elementos de consumo moderado. Mantenga porciones equilibradas.")
+                    api_key = st.secrets.get("GEMINI_API_KEY", "")
+                    if not api_key:
+                        st.error("⚠️ Falta configurar la API Key de Gemini en los secrets de Streamlit.")
                     else:
-                        st.success("**Dictamen:** Formulación basada en extractos adaptógenos y excipientes seguros. Apto para su ingesta bajo las pautas regulares del fabricante.")
-                else:
-                    st.success("✅ **Dictamen:** La etiqueta muestra componentes estables y seguros sin alertas críticas registradas.")
+                        genai.configure(api_key=api_key)
+                        # Usamos el modelo multimodal oficial para leer el texto exacto de la foto
+                        modelo_vision = genai.GenerativeModel('gemini-1.5-flash')
+                        
+                        prompt_ia = (
+                            "Actúa como un especialista en toxicología alimentaria y normativas sanitarias internacionales. "
+                            "Examina esta imagen de manera estricta y lee textualmente los ingredientes o componentes declarados en ella. "
+                            "No inventes productos ni asumas ingredientes que no aparezcan en la foto. "
+                            "Luego, con base exclusiva en esos ingredientes extraídos, emite un dictamen sanitario detallado estructurado exactamente así:\n\n"
+                            "1. INGREDIENTES DETECTADOS EN LA IMAGEN:\n"
+                            "2. ANÁLISIS TOXICOLÓGICO Y NUTRICIONAL:\n"
+                            "3. CLASIFICACIÓN (Favorable / Moderado / Precaución o Alerta):\n"
+                            "4. RECOMENDACIÓN DE CONSUMO:"
+                        )
+                        
+                        respuesta = modelo_vision.generate_content([prompt_ia, imagen_pil])
+                        
+                        st.markdown("---")
+                        st.subheader("📊 Resultados del Análisis Automático")
+                        st.markdown(respuesta.text)
+                        
+                except Exception as e:
+                    st.error(f"⚠️ Error al conectar con el motor de visión inteligente: {e}")
 elif menu == "Triaje y Alerta SOS":
   st.title("🚨 Triaje y Alerta SOS")
 
