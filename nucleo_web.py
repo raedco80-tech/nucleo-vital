@@ -173,69 +173,74 @@ elif menu == "Escudo y memoria":
 
 elif menu == "Escáner táctico Pro":
     # ==========================================
-    # BASE DE DATOS INTERNA CON LÍMITES DE EXPOSICIÓN
+    # BASE DE DATOS INTERNA CON ALERTAS CRÓNICAS
     # ==========================================
     BASE_INGREDIENTES_MAESTRA = {
-        # 1. HIGIENE Y COSMÉTICA (Desodorantes, cremas, pastas)
+        # 1. HIGIENE Y COSMÉTICA
         "aluminio": {
             "categoria": "Antitranspirante", "clasificacion": "Precaución / Monitoreo", 
-            "dictamen": "Bloquea conductos sudoríparos. Posible acumulación en tejidos a largo plazo.", 
+            "dictamen": "Bloquea conductos sudoríparos. Se absorbe por la piel.", 
             "recomendacion": "Alternar con opciones 'Zero Aluminio'.",
-            "limite": "Máximo 1 aplicación diaria. JAMÁS aplicar sobre piel recién depilada o irritada (aumenta la absorción sistémica)."
+            "limite": "Máximo 1 aplicación diaria.",
+            "riesgo_cronico": "🚨 USO CRÓNICO: Riesgo de neurotoxicidad por acumulación de metales pesados en el cuerpo humano y sospecha de alteración en tejido mamario a largo plazo."
         },
         "triclosan": {
             "categoria": "Antibacteriano", "clasificacion": "Precaución / Alerta Sanitaria", 
-            "dictamen": "Asociado a alteración endocrina y resistencia bacteriana.", 
+            "dictamen": "Agente antimicrobiano de amplio espectro.", 
             "recomendacion": "Buscar jabones de glicerina pura.",
-            "limite": "Límite legal 0.3%. NO se recomienda para uso diario crónico en el hogar."
+            "limite": "No se recomienda para uso diario.",
+            "riesgo_cronico": "🚨 USO CRÓNICO: Alteración del sistema endocrino (desajustes hormonales) y fomento de cepas de bacterias súper-resistentes en la piel."
         },
         "parabenos": {
             "categoria": "Conservante", "clasificacion": "Precaución / Monitoreo", 
-            "dictamen": "Asociados a disrupción endocrina leve (actúan como estrógenos débiles).", 
-            "recomendacion": "Buscar opciones 'Libre de parabenos' para el uso diario.",
-            "limite": "Límite legal 0.4% (individual) o 0.8% (mezclados). Evitar lociones corporales que los contengan si se aplican en todo el cuerpo a diario."
+            "dictamen": "Actúan como estrógenos débiles en el organismo.", 
+            "recomendacion": "Buscar opciones 'Libre de parabenos'.",
+            "limite": "Evitar lociones de cuerpo entero que los contengan.",
+            "riesgo_cronico": "🚨 USO CRÓNICO: Acumulación estrogénica que puede interferir con el desarrollo hormonal normal a lo largo de los años."
         },
         "dental": {
             "categoria": "Higiene Bucal", "clasificacion": "Favorable / Seguro", 
             "dictamen": "Fluoruro de sodio y abrasivos para endurecer el esmalte.", 
             "recomendacion": "No tragar la espuma tras el cepillado.",
-            "limite": "Máximo 1450-1500 ppm de flúor en adultos. Dosis segura: una porción del tamaño de una arveja/guisante por lavado."
+            "limite": "Una porción del tamaño de una arveja por lavado.",
+            "riesgo_cronico": "🟢 USO CRÓNICO: Si no se ingiere, es totalmente seguro y previene la destrucción crónica del esmalte dental (caries profundas)."
         },
 
         # 2. ALIMENTOS Y BEBIDAS
         "coca": {
-            "categoria": "Bebida Carbonatada", "clasificacion": "Precaución / Alerta Sanitaria", 
-            "dictamen": "Sobrecarga hepática por jarabe de alta fructosa.", 
-            "recomendacion": "Sustituir por agua carbonatada natural.",
-            "limite": "Límite OMS: 25g de azúcares libres diarios (Una sola lata ya supera el 140% de tu límite diario)."
+            "categoria": "Bebida Carbonatada", "clasificacion": "Precaución / Peligro Metabólico", 
+            "dictamen": "Sobrecarga de glucosa y jarabe de alta fructosa.", 
+            "recomendacion": "Sustituir por agua carbonatada sin azúcar.",
+            "limite": "Límite OMS: 25g de azúcares libres diarios.",
+            "riesgo_cronico": "🚨 CONSUMO FRECUENTE: Desarrollo directo de resistencia a la insulina, diabetes tipo 2, esteatosis hepática (hígado graso) y obesidad severa."
+        },
+        "gaseosa": {
+            "categoria": "Bebida Azucarada", "clasificacion": "Precaución / Peligro Metabólico", 
+            "dictamen": "Agua carbonatada con exceso de azúcares y colorantes.", 
+            "recomendacion": "Evitar su consumo regular.",
+            "limite": "Límite OMS: 25g de azúcares libres diarios.",
+            "riesgo_cronico": "🚨 CONSUMO FRECUENTE: Descalcificación ósea por ácido fosfórico, daño al esmalte dental y alto riesgo de síndrome metabólico."
         },
         "hot dog": {
             "categoria": "Embutido Cárnico", "clasificacion": "Precaución / Alerta Sanitaria", 
-            "dictamen": "Contiene nitritos que al calentarse a altas temperaturas forman nitrosaminas (cancerígenas).", 
-            "recomendacion": "Hervir en lugar de freír para reducir riesgo.",
-            "limite": "Máximo recomendado: 1 a 2 unidades por semana, nunca como fuente primaria de proteína diaria."
+            "dictamen": "Contiene nitritos y exceso de sodio industrial.", 
+            "recomendacion": "Hervir en lugar de freír para reducir la reacción química.",
+            "limite": "Máximo 1 a 2 unidades semanales.",
+            "riesgo_cronico": "🚨 CONSUMO FRECUENTE: Clasificado por la OMS como factor de riesgo para desarrollar cáncer colorrectal crónico, además de generar hipertensión arterial."
         },
         "atun": {
             "categoria": "Conserva Marina", "clasificacion": "Favorable / Nutritivo", 
-            "dictamen": "Fuente de Omega-3 y proteínas magras de alta biodisponibilidad.", 
-            "recomendacion": "Preferir presentaciones 'en agua' y escurrir bien el sodio.",
-            "limite": "Máximo 2 a 3 latas por semana debido a la posible bioacumulación de metales pesados (mercurio)."
+            "dictamen": "Proteínas magras y Omega-3.", 
+            "recomendacion": "Preferir presentaciones 'en agua'.",
+            "limite": "Máximo 2 a 3 latas por semana.",
+            "riesgo_cronico": "⚠️ CONSUMO EXCESIVO: El consumo diario (más de 4 latas semanales) puede generar bioacumulación de mercurio, causando fatiga, temblores y daño neurológico leve."
         },
-
-        # 3. SUPLEMENTOS
-        "tongkat": {
-            "categoria": "Suplemento", "clasificacion": "Favorable", 
-            "dictamen": "Adaptógeno para rendimiento físico y modulación hormonal.", 
-            "recomendacion": "Ciclar su uso para no saturar los receptores.",
-            "limite": "Máximo 200mg-400mg diarios. Usar en ciclos de 4 a 8 semanas, seguidos de 2 a 4 semanas de descanso total."
-        },
-
-        # 4. LIMPIEZA Y GARAJE
-        "hipoclorito de sodio": {
-            "categoria": "Desinfectante (Lejía)", "clasificacion": "Peligro / Tóxico por Inhalación", 
-            "dictamen": "Gases altamente corrosivos para el tracto respiratorio.", 
-            "recomendacion": "Jamás mezclar con ácido muriático, vinagre o amoníaco.",
-            "limite": "Dilución máxima segura: 20 ml (una tapita) por cada litro de agua. No exceder 15 minutos de exposición en espacios cerrados."
+        "galleta": {
+            "categoria": "Snack Dulce", "clasificacion": "Moderación Requerida", 
+            "dictamen": "Harinas refinadas sin fibra y grasas hidrogenadas.", 
+            "recomendacion": "Consumir rara vez y en porciones chicas.",
+            "limite": "Una porción esporádica a la semana.",
+            "riesgo_cronico": "🚨 CONSUMO FRECUENTE: Picos crónicos de glucosa, aumento de colesterol LDL (malo) y riesgo de daño cardiovascular temprano."
         }
     }
 
@@ -243,7 +248,7 @@ elif menu == "Escáner táctico Pro":
     # INTERFAZ DE USUARIO: ESCÁNER TÁCTICO PRO
     # ==========================================
     st.markdown("### 📷 y 🎙️ Escáner Táctico Pro - Análisis por Voz y Texto")
-    st.write("Sube la foto del producto y dicta los ingredientes para conocer su perfil toxicológico y sus límites de exposición crónica.")
+    st.write("Sube la foto del producto y dicta los ingredientes para conocer su impacto toxicológico a largo plazo.")
     
     archivo_foto = st.file_uploader("1. Sube o toma la foto del producto", type=["jpg", "jpeg", "png", "webp"], key="foto_evidencia")
     if archivo_foto is not None:
@@ -256,15 +261,15 @@ elif menu == "Escáner táctico Pro":
 
     st.markdown("---")
     st.markdown("#### 🎙️ Lector de Ingredientes")
-    st.info("Toca aquí, presiona el micrófono 🎙️ de tu teclado y dicta los ingredientes.")
+    st.info("Toca aquí, presiona el micrófono 🎙️ de tu teclado y dicta los ingredientes (Ej: coca, galleta, aluminio, triclosan).")
     
-    ingredientes_texto = st.text_area("Ingresa los ingredientes aquí:", height=100, placeholder="Ejemplo: Contiene agua, aluminio, parabenos, perfume...")
+    ingredientes_texto = st.text_area("Ingresa los ingredientes aquí:", height=100, placeholder="Dicta los ingredientes...")
     
-    if st.button("🔍 Analizar Riesgo y Exposición"):
+    if st.button("🔍 Analizar Riesgo Crónico"):
         if ingredientes_texto.strip() == "":
             st.warning("⚠️ Por favor, dicta o escribe algunos ingredientes antes de analizar.")
         else:
-            with st.spinner("Calculando límites de exposición y toxicidad..."):
+            with st.spinner("Evaluando consecuencias de salud a largo plazo..."):
                 texto_minusculas = ingredientes_texto.lower()
                 componentes_hallados = []
 
@@ -275,7 +280,7 @@ elif menu == "Escáner táctico Pro":
                         componentes_hallados.append(datos_encontrados)
 
                 st.markdown("---")
-                st.subheader("📊 Reporte Sanitario y Dosimetría")
+                st.subheader("📊 Reporte de Toxicidad e Impacto")
                 
                 if len(componentes_hallados) > 0:
                     st.success(f"Se identificaron **{len(componentes_hallados)}** componentes clave:")
@@ -286,17 +291,19 @@ elif menu == "Escáner táctico Pro":
                             
                             if "Favorable" in clasif:
                                 st.success(f"🟢 **Clasificación: {clasif}**")
-                            elif "Peligro" in clasif or "Alerta" in clasif:
+                            elif "Peligro" in clasif or "Alerta" in clasif or "Metabólico" in clasif:
                                 st.error(f"🔴 **Clasificación: {clasif}**")
                             else:
                                 st.warning(f"🟡 **Clasificación: {clasif}**")
                             
-                            st.write(f"**Análisis de Riesgo:** {item['dictamen']}")
-                            st.write(f"**Recomendación de Uso:** {item['recomendacion']}")
-                            # Nuevo campo de límite de exposición en negrita para resaltar
-                            st.markdown(f"**⚠️ Límite / Exposición Máxima:** {item['limite']}")
+                            st.write(f"**Análisis:** {item['dictamen']}")
+                            st.write(f"**Recomendación:** {item['recomendacion']}")
+                            st.write(f"**⚠️ Límite Seguro:** {item['limite']}")
+                            
+                            # NUEVA ALERTA DE RIESGO CRÓNICO
+                            st.markdown(f"**{item['riesgo_cronico']}**")
                 else:
-                    st.info("✅ **Análisis completado:** No se detectaron ingredientes críticos. Aparentemente es de uso libre, pero siempre mantén la prudencia con las cantidades.")
+                    st.info("✅ **Análisis completado:** No se detectaron ingredientes críticos. Aparentemente es de uso libre, pero mantén la prudencia con las cantidades.")
 elif menu == "Triaje y Alerta SOS":
   st.title("🚨 Triaje y Alerta SOS")
 
