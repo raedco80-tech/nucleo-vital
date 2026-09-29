@@ -173,84 +173,248 @@ elif menu == "Escudo y memoria":
 
 elif menu == "Escáner táctico Pro":
     # ==========================================
-    # BASE DE DATOS INTERNA CON ALERTAS CRÓNICAS
+    # BASE DE DATOS MAESTRA UNIFICADA (ALIMENTOS, QUÍMICOS, HIGIENE Y COMIDAS)
     # ==========================================
     BASE_INGREDIENTES_MAESTRA = {
-        # 1. HIGIENE Y COSMÉTICA
-        "aluminio": {
-            "categoria": "Antitranspirante", "clasificacion": "Precaución / Monitoreo", 
-            "dictamen": "Bloquea conductos sudoríparos. Se absorbe por la piel.", 
-            "recomendacion": "Alternar con opciones 'Zero Aluminio'.",
-            "limite": "Máximo 1 aplicación diaria.",
-            "riesgo_cronico": "🚨 USO CRÓNICO: Riesgo de neurotoxicidad por acumulación de metales pesados en el cuerpo humano y sospecha de alteración en tejido mamario a largo plazo."
+        # --- 1. GRASAS Y ACEITES ---
+        "aceite vegetal": {
+            "categoria": "Grasa Refinada (Soya/Girasol)", "clasificacion": "Moderación Requerida",
+            "dictamen": "Sometido a altas temperaturas y químicos en su extracción. Alto en Omega-6 proinflamatorio.",
+            "recomendacion": "Usar la mínima cantidad posible para cocinar. Evitar reutilizarlo.",
+            "limite": "Uso medido. Desechar después de freír.",
+            "riesgo_cronico": "🚨 USO CRÓNICO: Promueve inflamación sistémica celular, oxidación y eleva el riesgo de enfermedades cardiovasculares crónicas."
         },
-        "triclosan": {
-            "categoria": "Antibacteriano", "clasificacion": "Precaución / Alerta Sanitaria", 
-            "dictamen": "Agente antimicrobiano de amplio espectro.", 
-            "recomendacion": "Buscar jabones de glicerina pura.",
-            "limite": "No se recomienda para uso diario.",
-            "riesgo_cronico": "🚨 USO CRÓNICO: Alteración del sistema endocrino (desajustes hormonales) y fomento de cepas de bacterias súper-resistentes en la piel."
+        "aceite de coco": {
+            "categoria": "Grasa Saturada Vegetal", "clasificacion": "Moderación Requerida",
+            "dictamen": "Rico en triglicéridos de cadena media, resiste bien el calor, pero sigue siendo grasa saturada.",
+            "recomendacion": "Excelente para cocinar a altas temperaturas, pero sin abusar.",
+            "limite": "Máximo 1 cucharada diaria.",
+            "riesgo_cronico": "⚠️ CONSUMO EXCESIVO: A pesar de sus beneficios, su abuso crónico puede elevar los niveles de colesterol LDL (malo) en sangre."
         },
-        "parabenos": {
-            "categoria": "Conservante", "clasificacion": "Precaución / Monitoreo", 
-            "dictamen": "Actúan como estrógenos débiles en el organismo.", 
-            "recomendacion": "Buscar opciones 'Libre de parabenos'.",
-            "limite": "Evitar lociones de cuerpo entero que los contengan.",
-            "riesgo_cronico": "🚨 USO CRÓNICO: Acumulación estrogénica que puede interferir con el desarrollo hormonal normal a lo largo de los años."
+        "aceite de oliva extra virgen": {
+            "categoria": "Grasa Saludable (Omega 9)", "clasificacion": "Favorable / Cardioprotector",
+            "dictamen": "Extracción en frío, rico en antioxidantes y grasas monoinsaturadas saludables.",
+            "recomendacion": "Usar crudo en ensaladas o al final de las comidas. No freír a fuego alto con él.",
+            "limite": "2 a 3 cucharadas diarias.",
+            "riesgo_cronico": "🟢 USO CRÓNICO: Previene infartos, reduce la presión arterial y protege el cerebro a largo plazo."
         },
-        "dental": {
-            "categoria": "Higiene Bucal", "clasificacion": "Favorable / Seguro", 
-            "dictamen": "Fluoruro de sodio y abrasivos para endurecer el esmalte.", 
-            "recomendacion": "No tragar la espuma tras el cepillado.",
-            "limite": "Una porción del tamaño de una arveja por lavado.",
-            "riesgo_cronico": "🟢 USO CRÓNICO: Si no se ingiere, es totalmente seguro y previene la destrucción crónica del esmalte dental (caries profundas)."
+        "manteca": {
+            "categoria": "Grasa Saturada (Animal/Vegetal)", "clasificacion": "Precaución / Peligro Cardiovascular",
+            "dictamen": "Lípido de altísima densidad calórica.",
+            "recomendacion": "Reemplazar por aceites vegetales líquidos para los aderezos.",
+            "limite": "Uso estrictamente ocasional.",
+            "riesgo_cronico": "🚨 USO CRÓNICO: Aumento severo del colesterol, formación de placas en las arterias (aterosclerosis) y riesgo de infarto."
+        },
+        "margarina": {
+            "categoria": "Grasa Vegetal Modificada", "clasificacion": "Precaución / Alerta Sanitaria",
+            "dictamen": "Aceite vegetal hidrogenado. Suele esconder grasas trans.",
+            "recomendacion": "Evitar por completo.",
+            "limite": "Evitar su consumo regular.",
+            "riesgo_cronico": "🚨 USO CRÓNICO: Daña el endotelio vascular y eleva drásticamente el riesgo de cardiopatías."
         },
 
-        # 2. ALIMENTOS Y BEBIDAS
+        # --- 2. COMIDAS CLÁSICAS Y FRITURAS ---
+        "broster": {
+            "categoria": "Fritura Profunda", "clasificacion": "Precaución / Peligro Metabólico",
+            "dictamen": "Combina pollo con un empanizado de harina refinada que absorbe grandes cantidades de aceite reutilizado.",
+            "recomendacion": "Quitar el pellejo empanizado para reducir el daño a la mitad.",
+            "limite": "Máximo 1 vez al mes o esporádicamente.",
+            "riesgo_cronico": "🚨 CONSUMO FRECUENTE: Obesidad, hipertensión y daño arterial agudo por grasas trans, aceite oxidado y acrilamidas."
+        },
+        "pollo a la brasa": {
+            "categoria": "Plato Tradicional (Asado)", "clasificacion": "Moderación Requerida",
+            "dictamen": "La carne magra es excelente, pero el pellejo tostado y las cremas disparan las calorías y grasas malas.",
+            "recomendacion": "Comer la pechuga, dejar el pellejo quemado y acompañar con ensalada.",
+            "limite": "1 a 2 veces al mes (plato completo).",
+            "riesgo_cronico": "⚠️ CONSUMO FRECUENTE: Las partes carbonizadas contienen HAP, vinculados a irritación gástrica y potencial cancerígeno."
+        },
+        "anticuchos": {
+            "categoria": "Parrilla / Vísceras", "clasificacion": "Favorable / Moderación",
+            "dictamen": "El corazón de res es una bomba de proteínas, hierro y vitamina B12.",
+            "recomendacion": "Retirar las partes muy quemadas por el carbón.",
+            "limite": "Excelente opción quincenal.",
+            "riesgo_cronico": "🟢 USO CRÓNICO: Combate la anemia poderosamente. Riesgo gástrico solo si se abusa de porciones carbonizadas."
+        },
+        "ceviche": {
+            "categoria": "Pescado Crudo Curado", "clasificacion": "Favorable / Alto Valor Nutricional",
+            "dictamen": "Pescado magro rico en Omega-3, vitamina C y cebolla.",
+            "recomendacion": "Consumir en lugares de extrema higiene.",
+            "limite": "Se puede consumir 1 a 2 veces por semana.",
+            "riesgo_cronico": "🟢 USO CRÓNICO: Fortalece el sistema inmunológico, mejora la salud cardiovascular y cerebral."
+        },
+        "papa frita": {
+            "categoria": "Carbohidrato Frito", "clasificacion": "Precaución / Alerta Sanitaria",
+            "dictamen": "Almidón frito a altas temperaturas que absorbe mucho aceite.",
+            "recomendacion": "Reemplazar por papa sancochada o al horno.",
+            "limite": "Porción pequeña y ocasional.",
+            "riesgo_cronico": "🚨 CONSUMO FRECUENTE: Acumulación de acrilamida (potencial cancerígeno) y taponamiento arterial."
+        },
+        "huevos fritos": {
+            "categoria": "Proteína Frita", "clasificacion": "Moderación Requerida",
+            "dictamen": "Al freírse en aceite vegetal caliente, el perfil lipídico del huevo empeora.",
+            "recomendacion": "Preparar sancochado o revuelto con una gota mínima de aceite de oliva.",
+            "limite": "Preferir otras cocciones para consumo diario.",
+            "riesgo_cronico": "⚠️ CONSUMO FRECUENTE: Suma calorías vacías y grasas oxidadas que afectan la salud del corazón."
+        },
+
+        # --- 3. DULCES, BEBIDAS Y SNACKS ---
         "coca": {
             "categoria": "Bebida Carbonatada", "clasificacion": "Precaución / Peligro Metabólico", 
             "dictamen": "Sobrecarga de glucosa y jarabe de alta fructosa.", 
             "recomendacion": "Sustituir por agua carbonatada sin azúcar.",
             "limite": "Límite OMS: 25g de azúcares libres diarios.",
-            "riesgo_cronico": "🚨 CONSUMO FRECUENTE: Desarrollo directo de resistencia a la insulina, diabetes tipo 2, esteatosis hepática (hígado graso) y obesidad severa."
+            "riesgo_cronico": "🚨 CONSUMO FRECUENTE: Resistencia a la insulina, diabetes tipo 2, hígado graso y obesidad severa."
         },
-        "gaseosa": {
-            "categoria": "Bebida Azucarada", "clasificacion": "Precaución / Peligro Metabólico", 
-            "dictamen": "Agua carbonatada con exceso de azúcares y colorantes.", 
-            "recomendacion": "Evitar su consumo regular.",
-            "limite": "Límite OMS: 25g de azúcares libres diarios.",
-            "riesgo_cronico": "🚨 CONSUMO FRECUENTE: Descalcificación ósea por ácido fosfórico, daño al esmalte dental y alto riesgo de síndrome metabólico."
+        "cafe": {
+            "categoria": "Bebida Estimulante", "clasificacion": "Favorable / Dosis-Dependiente",
+            "dictamen": "Rico en antioxidantes. Mejora el estado de alerta.",
+            "recomendacion": "Tomar filtrado y sin azúcar.",
+            "limite": "Máximo 3 a 4 tazas diarias (antes de las 4 PM).",
+            "riesgo_cronico": "🟢 USO MODERADO: Protector hepático. 🚨 ABUSO CRÓNICO: Insomnio, ansiedad y gastritis."
+        },
+        "paneton": {
+            "categoria": "Panadería Dulce", "clasificacion": "Precaución / Peligro Metabólico",
+            "dictamen": "Bomba de carbohidratos refinados, grandes cantidades de azúcar y manteca.",
+            "recomendacion": "Tratarlo como un postre de celebración esporádico.",
+            "limite": "1 rebanada (100g) esporádicamente en temporada.",
+            "riesgo_cronico": "🚨 CONSUMO FRECUENTE: Causa picos graves de insulina, hígado graso y sobrepeso rápido."
+        },
+        "mermelada": {
+            "categoria": "Dulce / Conserva", "clasificacion": "Precaución / Alto en Azúcar",
+            "dictamen": "Más del 50% de azúcares libres añadidos.",
+            "recomendacion": "Consumir versiones sin azúcar añadida.",
+            "limite": "Máximo 1 cucharada al ras por porción.",
+            "riesgo_cronico": "🚨 CONSUMO FRECUENTE: Genera resistencia a la insulina y aumento de triglicéridos."
+        },
+        "galleta chocolate": {
+            "categoria": "Ultraprocesado Dulce", "clasificacion": "Precaución / Peligro Metabólico",
+            "dictamen": "Harinas refinadas, grasas trans y exceso de azúcar libre.",
+            "recomendacion": "No usar como merienda escolar diaria.",
+            "limite": "1 a 2 unidades de forma esporádica.",
+            "riesgo_cronico": "🚨 CONSUMO FRECUENTE: Obesidad infantil/adulta e hígado graso no alcohólico."
+        },
+        "galleta": {
+            "categoria": "Snack Procesado", "clasificacion": "Moderación Requerida", 
+            "dictamen": "Harinas refinadas y azúcares añadidos.", 
+            "recomendacion": "Consumo ocasional.",
+            "limite": "Una porción esporádica a la semana.",
+            "riesgo_cronico": "🚨 CONSUMO FRECUENTE: Picos crónicos de glucosa y aumento de colesterol LDL."
+        },
+
+        # --- 4. CARNES, LÁCTEOS Y EMBUTIDOS ---
+        "salchicha": {
+            "categoria": "Embutido Cárnico", "clasificacion": "Precaución / Alerta Sanitaria",
+            "dictamen": "Alta concentración de grasas saturadas, sodio y nitritos.",
+            "recomendacion": "Priorizar carnes frescas.",
+            "limite": "Consumo esporádico (máximo 1 vez por semana).",
+            "riesgo_cronico": "🚨 CONSUMO FRECUENTE: Factor de riesgo alto para enfermedades cardiovasculares y cáncer colorrectal."
         },
         "hot dog": {
             "categoria": "Embutido Cárnico", "clasificacion": "Precaución / Alerta Sanitaria", 
             "dictamen": "Contiene nitritos y exceso de sodio industrial.", 
-            "recomendacion": "Hervir en lugar de freír para reducir la reacción química.",
+            "recomendacion": "Hervir en lugar de freír.",
             "limite": "Máximo 1 a 2 unidades semanales.",
-            "riesgo_cronico": "🚨 CONSUMO FRECUENTE: Clasificado por la OMS como factor de riesgo para desarrollar cáncer colorrectal crónico, además de generar hipertensión arterial."
+            "riesgo_cronico": "🚨 CONSUMO FRECUENTE: Clasificado por la OMS como factor de riesgo para desarrollar cáncer colorrectal crónico."
+        },
+        "queso": {
+            "categoria": "Lácteo / Fermentado", "clasificacion": "Moderación Requerida",
+            "dictamen": "Buena fuente de calcio, pero las versiones procesadas tienen exceso de sodio.",
+            "recomendacion": "Preferir quesos frescos, blancos y bajos en sal.",
+            "limite": "1 a 2 rebanadas diarias.",
+            "riesgo_cronico": "⚠️ CONSUMO EXCESIVO: El exceso de sodio crónico genera hipertensión arterial."
+        },
+        "leche": {
+            "categoria": "Lácteo Base", "clasificacion": "Favorable / Nutritivo", 
+            "dictamen": "Aporte natural de calcio y proteínas.", 
+            "recomendacion": "Apto para dieta diaria si hay tolerancia.",
+            "limite": "Porciones diarias según requerimiento calórico.",
+            "riesgo_cronico": "🟢 USO CRÓNICO: Fortalecimiento óseo preventivo."
         },
         "atun": {
             "categoria": "Conserva Marina", "clasificacion": "Favorable / Nutritivo", 
             "dictamen": "Proteínas magras y Omega-3.", 
             "recomendacion": "Preferir presentaciones 'en agua'.",
             "limite": "Máximo 2 a 3 latas por semana.",
-            "riesgo_cronico": "⚠️ CONSUMO EXCESIVO: El consumo diario (más de 4 latas semanales) puede generar bioacumulación de mercurio, causando fatiga, temblores y daño neurológico leve."
+            "riesgo_cronico": "⚠️ CONSUMO EXCESIVO: Riesgo de bioacumulación de mercurio."
         },
-        "galleta": {
-            "categoria": "Snack Dulce", "clasificacion": "Moderación Requerida", 
-            "dictamen": "Harinas refinadas sin fibra y grasas hidrogenadas.", 
-            "recomendacion": "Consumir rara vez y en porciones chicas.",
-            "limite": "Una porción esporádica a la semana.",
-            "riesgo_cronico": "🚨 CONSUMO FRECUENTE: Picos crónicos de glucosa, aumento de colesterol LDL (malo) y riesgo de daño cardiovascular temprano."
+
+        # --- 5. SUPLEMENTOS Y ANDINOS ---
+        "tongkat": {
+            "categoria": "Suplemento", "clasificacion": "Favorable / Uso Específico", 
+            "dictamen": "Adaptógeno para rendimiento físico.", 
+            "recomendacion": "Ciclar su uso.",
+            "limite": "Máximo 200mg-400mg diarios en ciclos cortos.",
+            "riesgo_cronico": "⚠️ USO CRÓNICO: Posible fatiga adrenal si no se descansa."
+        },
+        "maca": {
+            "categoria": "Raíz Adaptógena", "clasificacion": "Favorable / Energético", 
+            "dictamen": "Tubérculo con propiedades vigorizantes.", 
+            "recomendacion": "Preferente en mañanas.",
+            "limite": "1 a 2 cucharadas diarias.",
+            "riesgo_cronico": "🟢 USO CRÓNICO: Mejora sostenida de la vitalidad y perfil hormonal."
+        },
+
+        # --- 6. HIGIENE BUCAL Y CORPORAL ---
+        "dental": {
+            "categoria": "Higiene Bucal", "clasificacion": "Favorable / Seguro", 
+            "dictamen": "Fluoruro de sodio y abrasivos para endurecer el esmalte.", 
+            "recomendacion": "No tragar la espuma tras el cepillado.",
+            "limite": "Una porción del tamaño de una arveja por lavado.",
+            "riesgo_cronico": "🟢 USO CRÓNICO: Si no se ingiere, previene la destrucción crónica del esmalte dental (caries)."
+        },
+        "aluminio": {
+            "categoria": "Antitranspirante", "clasificacion": "Precaución / Monitoreo", 
+            "dictamen": "Bloquea conductos sudoríparos. Se absorbe por la piel.", 
+            "recomendacion": "Alternar con opciones 'Zero Aluminio'.",
+            "limite": "Máximo 1 aplicación diaria.",
+            "riesgo_cronico": "🚨 USO CRÓNICO: Riesgo de neurotoxicidad por acumulación de metales pesados en el cuerpo humano."
+        },
+        "triclosan": {
+            "categoria": "Antibacteriano", "clasificacion": "Precaución / Alerta Sanitaria", 
+            "dictamen": "Agente antimicrobiano de amplio espectro.", 
+            "recomendacion": "Buscar jabones de glicerina pura.",
+            "limite": "No se recomienda para uso diario.",
+            "riesgo_cronico": "🚨 USO CRÓNICO: Alteración del sistema endocrino y fomento de cepas de bacterias súper-resistentes."
+        },
+        "parabenos": {
+            "categoria": "Conservante", "clasificacion": "Precaución / Monitoreo", 
+            "dictamen": "Actúan como estrógenos débiles en el organismo.", 
+            "recomendacion": "Buscar opciones 'Libre de parabenos'.",
+            "limite": "Evitar lociones de cuerpo entero que los contengan.",
+            "riesgo_cronico": "🚨 USO CRÓNICO: Acumulación estrogénica que interfiere con el desarrollo hormonal normal."
+        },
+
+        # --- 7. INFANTIL, LIMPIEZA Y GARAJE ---
+        "cocamidopropil betaina": {
+            "categoria": "Limpiador Suave (Bebés)", "clasificacion": "Favorable / Seguro", 
+            "dictamen": "Tensioactivo derivado del coco, no irrita los ojos.", 
+            "recomendacion": "Excelente opción para higiene infantil.",
+            "limite": "Uso diario seguro.",
+            "riesgo_cronico": "🟢 USO CRÓNICO: Mantiene la barrera cutánea sin dañarla."
+        },
+        "hipoclorito de sodio": {
+            "categoria": "Desinfectante (Lejía)", "clasificacion": "Peligro / Tóxico por Inhalación", 
+            "dictamen": "Gases altamente corrosivos para el tracto respiratorio.", 
+            "recomendacion": "Jamás mezclar con otros químicos.",
+            "limite": "Dilución estricta. No exceder 15 minutos en espacios cerrados.",
+            "riesgo_cronico": "🚨 EXPOSICIÓN CRÓNICA: Daño irreversible en mucosas respiratorias y riesgo de asma ocupacional."
+        },
+        "metanol": {
+            "categoria": "Solvente Industrial", "clasificacion": "Peligro / Altamente Tóxico", 
+            "dictamen": "Alcohol industrial que se absorbe velozmente por la piel.", 
+            "recomendacion": "Manipular con equipo de protección estricto.",
+            "limite": "Cero contacto directo.",
+            "riesgo_cronico": "🚨 EXPOSICIÓN CRÓNICA: Toxicidad acumulativa que afecta el nervio óptico (ceguera) y el sistema nervioso central."
         }
     }
 
     # ==========================================
     # INTERFAZ DE USUARIO: ESCÁNER TÁCTICO PRO
     # ==========================================
-    st.markdown("### 📷 y 🎙️ Escáner Táctico Pro - Análisis por Voz y Texto")
-    st.write("Sube la foto del producto y dicta los ingredientes para conocer su impacto toxicológico a largo plazo.")
+    st.markdown("### 📷 y 🎙️ Escáner Táctico Pro - Análisis Integral")
+    st.write("Sube la foto del producto y usa el dictado por voz para conocer su impacto toxicológico, límites seguros y alertas crónicas.")
     
-    archivo_foto = st.file_uploader("1. Sube o toma la foto del producto", type=["jpg", "jpeg", "png", "webp"], key="foto_evidencia")
+    archivo_foto = st.file_uploader("1. Sube o toma la foto del producto (Evidencia visual)", type=["jpg", "jpeg", "png", "webp"], key="foto_evidencia")
     if archivo_foto is not None:
         try:
             imagen_pil = Image.open(archivo_foto)
@@ -261,15 +425,15 @@ elif menu == "Escáner táctico Pro":
 
     st.markdown("---")
     st.markdown("#### 🎙️ Lector de Ingredientes")
-    st.info("Toca aquí, presiona el micrófono 🎙️ de tu teclado y dicta los ingredientes (Ej: coca, galleta, aluminio, triclosan).")
+    st.info("Toca aquí, presiona el micrófono 🎙️ de tu teclado en la tablet y dicta los ingredientes o nombres de los platos.")
     
-    ingredientes_texto = st.text_area("Ingresa los ingredientes aquí:", height=100, placeholder="Dicta los ingredientes...")
+    ingredientes_texto = st.text_area("Ingresa los ingredientes aquí:", height=100, placeholder="Ejemplo: aceite vegetal, pollo a la brasa, aluminio, triclosan...")
     
-    if st.button("🔍 Analizar Riesgo Crónico"):
+    if st.button("🔍 Analizar Riesgo y Exposición"):
         if ingredientes_texto.strip() == "":
-            st.warning("⚠️ Por favor, dicta o escribe algunos ingredientes antes de analizar.")
+            st.warning("⚠️ Por favor, dicta o escribe los elementos antes de analizar.")
         else:
-            with st.spinner("Evaluando consecuencias de salud a largo plazo..."):
+            with st.spinner("Evaluando perfil toxicológico y consecuencias a largo plazo..."):
                 texto_minusculas = ingredientes_texto.lower()
                 componentes_hallados = []
 
@@ -280,7 +444,7 @@ elif menu == "Escáner táctico Pro":
                         componentes_hallados.append(datos_encontrados)
 
                 st.markdown("---")
-                st.subheader("📊 Reporte de Toxicidad e Impacto")
+                st.subheader("📊 Reporte Oficial y Dosimetría Clínica")
                 
                 if len(componentes_hallados) > 0:
                     st.success(f"Se identificaron **{len(componentes_hallados)}** componentes clave:")
@@ -296,14 +460,12 @@ elif menu == "Escáner táctico Pro":
                             else:
                                 st.warning(f"🟡 **Clasificación: {clasif}**")
                             
-                            st.write(f"**Análisis:** {item['dictamen']}")
-                            st.write(f"**Recomendación:** {item['recomendacion']}")
+                            st.write(f"**Análisis de Riesgo:** {item['dictamen']}")
+                            st.write(f"**Recomendación de Uso:** {item['recomendacion']}")
                             st.write(f"**⚠️ Límite Seguro:** {item['limite']}")
-                            
-                            # NUEVA ALERTA DE RIESGO CRÓNICO
                             st.markdown(f"**{item['riesgo_cronico']}**")
                 else:
-                    st.info("✅ **Análisis completado:** No se detectaron ingredientes críticos. Aparentemente es de uso libre, pero mantén la prudencia con las cantidades.")
+                    st.info("✅ **Análisis completado:** No se detectaron ingredientes críticos registrados. Mantén siempre la prudencia con las cantidades de consumo.")
 elif menu == "Triaje y Alerta SOS":
   st.title("🚨 Triaje y Alerta SOS")
 
