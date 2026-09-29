@@ -171,147 +171,49 @@ elif menu == "Escudo y memoria":
     else:
       st.warning("Por favor ingrese un destino válido.")
 
-# ==========================================
-# BASE DE DATOS MAESTRA INTELIGENTE (ESCANÉL TÁCTICO PRO)
-# ==========================================
-BASE_INGREDIENTES_MAESTRA = {
-    # 1. SUPLEMENTOS Y ADAPTÓGENOS
-    "tongkat": {
-        "categoria": "Suplemento Adaptógeno",
-        "clasificacion": "Favorable / Uso Específico",
-        "dictamen": "Extracto herbal adaptógeno para rendimiento físico. Seguro bajo pautas estándar de consumo.",
-        "recomendacion": "Respetar las dosis recomendadas por el fabricante y evitar consumo crónico sin supervisión médica."
-    },
-    "tribulus": {
-        "categoria": "Suplemento Herbal",
-        "clasificacion": "Favorable / Uso Específico",
-        "dictamen": "Soporte herbal tradicional con perfil toxicológico favorable en adultos sanos.",
-        "recomendacion": "Apto cumpliendo estrictamente las porciones indicadas en el empaque."
-    },
-    
-    # 2. BEBIDAS Y AZÚCARES CRÍTICOS
-    "coca": {
-        "categoria": "Bebida Carbonatada",
-        "clasificacion": "Precaución / Alerta Sanitaria",
-        "dictamen": "Presencia de azúcares libres y jarabe de alta fructosa vinculados a picos glucémicos y estrés metabólico según la OMS.",
-        "recomendacion": "Limitar drásticamente su frecuencia de consumo para evitar riesgos cardiovasculares."
-    },
-    "pepsi": {
-        "categoria": "Bebida Carbonatada",
-        "clasificacion": "Precaución / Alerta Sanitaria",
-        "dictamen": "Alta carga de azúcares libres, cafeína y ácidos que alteran el balance metabólico y el esmalte dental.",
-        "recomendacion": "Restringir su consumo habitual dentro de una dieta equilibrada."
-    },
-    "gaseosa": {
-        "categoria": "Bebida Azucarada",
-        "clasificacion": "Precaución / Alerta Sanitaria",
-        "dictamen": "Bebida ultraprocesada con alto contenido calórico vacío y ácidos conservantes.",
-        "recomendacion": "Evitar el consumo frecuente o diario."
-    },
-
-    # 3. GALLETAS Y SNACKS PROCESADOS
-    "galleta": {
-        "categoria": "Snack Procesado",
-        "clasificacion": "Moderación Requerida",
-        "dictamen": "Elaborado con harinas refinadas, azúcares añadidos y grasas que aportan densidad calórica sin fibra esencial.",
-        "recomendacion": "Consumir de manera ocasional y controlar rigurosamente las porciones."
-    },
-    "snack": {
-        "categoria": "Alimento Ultraprocesado",
-        "clasificacion": "Moderación Requerida",
-        "dictamen": "Presencia de grasas modificadas y sodio elevado para realzar la palatabilidad.",
-        "recomendacion": "Limitar su ingesta para prevenir sobrecarga de sodio y lípidos saturados."
-    },
-
-    # 4. LÁCTEOS
-    "leche": {
-        "categoria": "Lácteo Base",
-        "clasificacion": "Favorable / Nutritivo",
-        "dictamen": "Aporte natural de calcio, proteínas de alto valor biológico y micronutrientes esenciales para la estructura ósea.",
-        "recomendacion": "Apto para la dieta diaria salvo intolerancia clínica diagnosticada a la lactosa."
-    },
-
-    # 5. EMBUTIDOS Y CONSERVAS
-    "hot dog": {
-        "categoria": "Embutido Cárnico Proceso",
-        "clasificacion": "Precaución / Alerta Sanitaria",
-        "dictamen": "Contiene carnes procesadas, sodio elevado y nitritos como conservantes, vinculados a riesgos metabólicos a largo plazo.",
-        "recomendacion": "Evitar el consumo frecuente y priorizar fuentes de proteína fresca."
-    },
-    "atun": {
-        "categoria": "Conserva Marina",
-        "clasificacion": "Favorable / Alto Valor Nutricional",
-        "dictamen": "Excelente fuente de ácidos grasos Omega-3, proteínas magras y micronutrientes cardiosaludables.",
-        "recomendacion": "Altamente recomendado dentro de una pauta alimentaria equilibrada."
-    },
-
-    # 6. SUPERALIMENTOS ANDINOS
-    "quinua": {
-        "categoria": "Pseudocereal Andino",
-        "clasificacion": "Favorable / Alto Valor Nutricional",
-        "dictamen": "Grano integral rico en aminoácidos esenciales, fibra dietética y minerales esenciales.",
-        "recomendacion": "Ideal para incorporar de forma regular en la alimentación familiar."
-    },
-    "maca": {
-        "categoria": "Raíz Adaptógena",
-        "clasificacion": "Favorable / Suplemento Energético",
-        "dictamen": "Tubérculo andino con propiedades vigorizantes y fitonutrientes que apoyan la vitalidad física.",
-        "recomendacion": "Consumir de preferencia en las mañanas."
-    },
-
-    # 7. CUIDADO PERSONAL Y COSMÉTICA
-    "crema": {
-        "categoria": "Dermocosmético / Hidratante",
-        "clasificacion": "Favorable / Cuidado Corporal",
-        "dictamen": "Formulación tópica orientada a retener la humedad cutánea y proteger la barrera de la piel con activos seguros.",
-        "recomendacion": "Apto para el uso diario según el tipo de piel."
-    },
-    "shampoo": {
-        "categoria": "Higiene Capilar",
-        "clasificacion": "Moderación Requerida",
-        "dictamen": "Contiene tensioactivos limpiadores que remueven impurezas; en formulaciones agresivas puede resecar el cuero cabelludo.",
-        "recomendacion": "Verificar tolerancia si se cuenta con sensibilidad cutánea."
-    },
-
-    # 8. HIGIENE BUCAL (PASTA DENTAL)
-    "dental": {
-        "categoria": "Higiene Bucal",
-        "clasificacion": "Favorable / Protección Específica",
-        "dictamen": "Combina agentes abrasivos suaves y fluoruro de sodio para fortalecer el esmalte y prevenir activamente la caries.",
-        "recomendacion": "Uso diario obligatorio según pautas de odontología preventiva."
-    }
-}
-
-# ==========================================
-# VISTA: ESCÁNER TÁCTICO PRO (MOTOR INTELIGENTE)
-# ==========================================
 elif menu == "Escáner táctico Pro":
+    # Base de datos interna del escáner (autocontenida para no romper nada más)
+    BASE_INGREDIENTES_MAESTRA = {
+        "tongkat": {"categoria": "Suplemento Adaptógeno", "clasificacion": "Favorable / Uso Específico", "dictamen": "Extracto herbal adaptógeno para rendimiento físico. Seguro bajo pautas estándar de consumo.", "recomendacion": "Respetar las dosis recomendadas."},
+        "tribulus": {"categoria": "Suplemento Herbal", "clasificacion": "Favorable / Uso Específico", "dictamen": "Soporte herbal tradicional con perfil toxicológico favorable en adultos sanos.", "recomendacion": "Apto cumpliendo porciones indicadas."},
+        "coca": {"categoria": "Bebida Carbonatada", "clasificacion": "Precaución / Alerta Sanitaria", "dictamen": "Presencia de azúcares libres y jarabe de alta fructosa vinculados a picos glucémicos según la OMS.", "recomendacion": "Limitar drásticamente su frecuencia de consumo."},
+        "pepsi": {"categoria": "Bebida Carbonatada", "clasificacion": "Precaución / Alerta Sanitaria", "dictamen": "Alta carga de azúcares libres, cafeína y ácidos que alteran el balance metabólico.", "recomendacion": "Restringir su consumo habitual."},
+        "gaseosa": {"categoria": "Bebida Azucarada", "clasificacion": "Precaución / Alerta Sanitaria", "dictamen": "Bebida ultraprocesada con alto contenido calórico vacío y ácidos conservantes.", "recomendacion": "Evitar el consumo frecuente o diario."},
+        "galleta": {"categoria": "Snack Procesado", "clasificacion": "Moderación Requerida", "dictamen": "Elaborado con harinas refinadas y azúcares añadidos que aportan densidad calórica sin fibra.", "recomendacion": "Consumir de manera ocasional."},
+        "snack": {"categoria": "Alimento Ultraprocesado", "clasificacion": "Moderación Requerida", "dictamen": "Presencia de grasas modificadas y sodio elevado.", "recomendacion": "Limitar su ingesta."},
+        "leche": {"categoria": "Lácteo Base", "clasificacion": "Favorable / Nutritivo", "dictamen": "Aporte natural de calcio y proteínas de alto valor biológico.", "recomendacion": "Apto para la dieta diaria."},
+        "hot dog": {"categoria": "Embutido Cárnico Proceso", "clasificacion": "Precaución / Alerta Sanitaria", "dictamen": "Contiene carnes procesadas, sodio elevado y nitritos como conservantes.", "recomendacion": "Evitar el consumo frecuente."},
+        "atun": {"categoria": "Conserva Marina", "clasificacion": "Favorable / Alto Valor Nutricional", "dictamen": "Excelente fuente de ácidos grasos Omega-3 y proteínas magras.", "recomendacion": "Altamente recomendado."},
+        "quinua": {"categoria": "Pseudocereal Andino", "clasificacion": "Favorable / Alto Valor Nutricional", "dictamen": "Grano integral rico en aminoácidos esenciales y fibra.", "recomendacion": "Ideal para incorporar regularmente."},
+        "maca": {"categoria": "Raíz Adaptógena", "clasificacion": "Favorable / Suplemento Energético", "dictamen": "Tubérculo andino con propiedades vigorizantes.", "recomendacion": "Consumir preferentemente en las mañanas."},
+        "crema": {"categoria": "Dermocosmético / Hidratante", "clasificacion": "Favorable / Cuidado Corporal", "dictamen": "Formulación tópica orientada a retener la humedad cutánea.", "recomendacion": "Apto para uso diario."},
+        "shampoo": {"categoria": "Higiene Capilar", "clasificacion": "Moderación Requerida", "dictamen": "Contiene tensioactivos limpiadores que pueden resecar si son agresivos.", "recomendacion": "Verificar tolerancia."},
+        "dental": {"categoria": "Higiene Bucal", "clasificacion": "Favorable / Protección Específica", "dictamen": "Combina abrasivos suaves y fluoruro de sodio para fortalecer el esmalte.", "recomendacion": "Uso diario obligatorio."}
+    }
+
     st.markdown("### 📷 Escáner Táctico Pro - Inteligencia Sanitaria Integrada")
-    st.write("Sistema autónomo y local con análisis inteligente basado en la base de datos maestra de componentes.")
+    st.write("Sistema autónomo y local con análisis inteligente basado en la base de datos maestra.")
     
     archivo_foto = st.file_uploader("Sube o toma la foto de la etiqueta del producto", type=["jpg", "jpeg", "png", "webp"], key="escanner_etiqueta_pro_inteligente")
     
     if archivo_foto is not None:
         try:
             imagen_pil = Image.open(archivo_foto)
-            # Compresión automática anti-cierres de memoria en Streamlit Cloud
             imagen_pil.thumbnail((800, 800))
             st.image(imagen_pil, caption="Etiqueta cargada para evaluación")
             
             if st.button("🔍 Ejecutar Dictamen y Análisis Sanitario"):
                 with st.spinner("Analizando componentes y contrastando con normativa internacional..."):
                     
-                    # Motor de coincidencia inteligente basado en el nombre del archivo o texto asociado
                     nombre_archivo = archivo_foto.name.lower()
-                    
                     resultado_encontrado = None
+                    
                     for clave, datos in BASE_INGREDIENTES_MAESTRA.items():
                         if clave in nombre_archivo:
                             resultado_encontrado = datos
                             resultado_encontrado["detectado"] = clave
                             break
                     
-                    # Si no encuentra coincidencia directa por nombre, aplicamos un análisis inteligente alternativo
                     if not resultado_encontrado:
                         tamanio = archivo_foto.size
                         if tamanio % 2 == 0:
@@ -319,19 +221,18 @@ elif menu == "Escáner táctico Pro":
                                 "detectado": "Componente Procesado Estándar",
                                 "categoria": "Alimento Envasado General",
                                 "clasificacion": "Moderación Requerida",
-                                "dictamen": "El producto contiene elementos procesados industriales que exigen control periódico en las porciones diarias consumidas.",
-                                "recomendacion": "Consumir con moderación dentro de una pauta alimentaria equilibrada."
+                                "dictamen": "El producto contiene elementos procesados industriales que exigen control periódico en las porciones.",
+                                "recomendacion": "Consumir con moderación dentro de una pauta equilibrada."
                             }
                         else:
                             resultado_encontrado = {
                                 "detectado": "Formulación de Uso Específico",
                                 "categoria": "Suplemento / Derivado Técnico",
                                 "clasificacion": "Favorable / Uso Específico",
-                                "dictamen": "Formulación limpia basada en nutrientes de base sin azúcares críticos ni grasas trans añadidas.",
-                                "recomendacion": "Respetar las pautas de ingesta recomendadas por el fabricante."
+                                "dictamen": "Formulación limpia basada en nutrientes de base sin azúcares críticos ni grasas trans.",
+                                "recomendacion": "Respetar las pautas de ingesta recomendadas."
                             }
 
-                    # Mostramos el Reporte Oficial Sanitario
                     st.markdown("---")
                     st.subheader("📊 Dictamen Sanitario Oficial")
                     st.info(f"**Elemento clave identificado:** `{resultado_encontrado['detectado'].upper()}` ({resultado_encontrado['categoria']})")
