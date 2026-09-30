@@ -169,7 +169,7 @@ elif menu == "Escudo y memoria":
   destino = st.text_input("Ingrese su lugar de destino a transitar:")
   incidente_camino = st.text_input("Reportar novedad o incidente imprevisto (Opcional):")
 
- if st.button("Consultar Estado y Generar Ruta"):
+if st.button("Consultar Estado y Generar Ruta"):
             if destino:
                 destino_lower = destino.lower()
                 if "mercado" in destino_lower or "peligro" in destino_lower:
