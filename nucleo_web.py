@@ -323,39 +323,54 @@ elif menu == "Escáner táctico Pro":
                 else:
                     st.info("✅ **Análisis completado:** No se detectaron ingredientes críticos registrados.")
 elif menu == "Triaje y Alerta SOS":
-  st.title("🚨 Triaje y Alerta SOS")
+            st.title("🚨 Triaje y Alerta SOS")
+            
+            if "contacto_sos" not in st.session_state:
+                st.session_state.contacto_sos = "+51 900000000"
+                
+            modo_entrada = st.radio("Método de reporte:", ["Escribir síntoma", "Dictar Comando de Voz"])
+            sintoma_reporte = st.text_area("Describa síntomas:" if modo_entrada == "Escribir síntoma" else "Transcripción de voz...")
+            
+            if st.button("⚡ Ejecutar Triaje Clínico"):
+                if sintoma_reporte:
+                    texto = sintoma_reporte.lower()
+                    if "pecho" in texto or "fuerte" in texto or "descompensación" in texto:
+                        st.error("🚨 **¡ALERTA SOS ACTIVADA POR GRAVEDAD CRÍTICA!**")
+                        
+                        # --- BOTÓN TÁCTICO DE WHATSAPP CON CONTACTO DINÁMICO ---
+                        mensaje = f"🚨 ALERTA SOS CRÍTICA 🚨 Paciente reporta: {sintoma_reporte}. Requiere asistencia inmediata. A continuación envío mi ubicación en tiempo real:"
+                        mensaje_url = mensaje.replace(" ", "%20")
+                        numero_wsp = st.session_state.contacto_sos.replace("+", "").replace(" ", "")
+                        enlace_wsp = f"https://wa.me/{numero_wsp}?text={mensaje_url}"
+                        
+                        st.markdown(f"""
+                        <a href="{enlace_wsp}" target="_blank" style="text-decoration: none;">
+                            <button style="background-color: #25D366; color: white; border-radius: 8px; font-weight: bold; height: 60px; width: 100%; font-size: 18px; border: 2px solid #128C7E; cursor: pointer; margin-top: 10px;">
+                                💬 ENVIAR ALERTA Y UBICACIÓN A WHATSAPP
+                            </button>
+                        </a>
+                        """, unsafe_allow_html=True)
+                    else:
+                        st.success("💊 **Triaje Exitoso:** Proceda con observación de rutina.")
+                else:
+                    st.warning("Por favor, describa los síntomas.")
 
-  if "contacto_sos" not in st.session_state:
-    st.session_state.contacto_sos = "+51 900000000"
-
-  modo_entrada = st.radio("Método de reporte:", ["Escribir síntoma", "🎤 Dictar Comando de Voz"])
-  sintoma_reporte = st.text_area("Describa síntomas:" if modo_entrada == "Escribir síntoma" else "Transcripción automática:")
-
-  if st.button("⚡ Ejecutar Triaje Clínico"):
-    if sintoma_reporte:
-      texto = sintoma_reporte.lower()
-      if "pecho" in texto or "fuerte" in texto or "descompensación" in texto:
-        st.error("🚨 **¡ALERTA SOS ACTIVADA POR GRAVEDAD CRÍTICA!**")
-        st.markdown(f"Aviso enviado a: **{st.session_state.contacto_sos}**")
-      else:
-        st.success("💊 **Triaje Exitoso:** Paracetamol 500mg y reposo.")
-
-# --- VISTA: PERFIL Y CONTACTO SOS ---
-elif menu == "Perfil y Contacto SOS":
-  st.title("👤 Configuración del Perfil")
-
-  if "nombre_usuario" not in st.session_state:
-    st.session_state.nombre_usuario = "Raúl"
-  if "contacto_sos" not in st.session_state:
-    st.session_state.contacto_sos = "+51 997538121"
-
-  alias_input = st.text_input("Nombre o Alias:", value=st.session_state.nombre_usuario)
-  contacto_input = st.text_input("Número de Contacto SOS:", value=st.session_state.contacto_sos)
-
-  if st.button("💾 GUARDAR PERFIL"):
-    st.session_state.nombre_usuario = alias_input
-    st.session_state.contacto_sos = contacto_input
-    st.success("¡Perfil guardado exitosamente!")
+        # --- VISTA: PERFIL Y CONTACTO SOS ---
+        elif menu == "Perfil y Contacto SOS":
+            st.title("👤 Configuración del Perfil")
+            
+            if "nombre_usuario" not in st.session_state:
+                st.session_state.nombre_usuario = "Raúl"
+            if "contacto_sos" not in st.session_state:
+                st.session_state.contacto_sos = "+51 997538121"
+                
+            alias_input = st.text_input("Nombre o Alias:", value=st.session_state.nombre_usuario)
+            contacto_input = st.text_input("Número de Contacto SOS:", value=st.session_state.contacto_sos)
+            
+            if st.button("💾 GUARDAR PERFIL"):
+                st.session_state.nombre_usuario = alias_input
+                st.session_state.contacto_sos = contacto_input
+                st.success("¡Perfil guardado exitosamente!")
 
 # --- VISTA: PANEL MAESTRO ---
 elif menu == "Panel Maestro (Licencias)":
