@@ -121,16 +121,30 @@ if st.session_state.tipo_usuario == "MASTER":
       ],
   )
 else:
-  menu = st.sidebar.selectbox(
-      "Seleccionar Sección",
-      [
-          "Centro de Mando",
-          "Escudo y memoria",
-          "Escáner táctico Pro",
-          "Triaje y Alerta SOS",
-          "Perfil y Contacto SOS",
-      ],
-  )
+ # Inicializar memoria de pantalla si no existe
+        if 'menu_actual' not in st.session_state:
+            st.session_state['menu_actual'] = "Centro de Mando"
+
+        st.sidebar.markdown("### ⚡ Navegación Táctica")
+
+        # Botones táctiles anchos (use_container_width=True hace que ocupen todo el ancho)
+        if st.sidebar.button("📊 Centro de Mando", use_container_width=True):
+            st.session_state['menu_actual'] = "Centro de Mando"
+            
+        if st.sidebar.button("🛡️ Escudo y memoria", use_container_width=True):
+            st.session_state['menu_actual'] = "Escudo y memoria"
+            
+        if st.sidebar.button("📷 Escáner táctico Pro", use_container_width=True):
+            st.session_state['menu_actual'] = "Escáner táctico Pro"
+            
+        if st.sidebar.button("🚑 Triaje y Alerta SOS", use_container_width=True):
+            st.session_state['menu_actual'] = "Triaje y Alerta SOS"
+            
+        if st.sidebar.button("👤 Perfil y Contacto SOS", use_container_width=True):
+            st.session_state['menu_actual'] = "Perfil y Contacto SOS"
+
+        # Conectar el botón presionado con el resto de tu código
+        menu = st.session_state['menu_actual']
 
 if st.sidebar.button("🔒 Cerrar Sesión"):
   st.session_state.autenticado = False
