@@ -337,24 +337,40 @@ elif menu == "Triaje y Alerta SOS":
                     if "pecho" in texto or "fuerte" in texto or "descompensación" in texto:
                         st.error("🚨 **¡ALERTA SOS ACTIVADA POR GRAVEDAD CRÍTICA!**")
                         
-                        # --- BOTÓN TÁCTICO DE WHATSAPP CON CONTACTO DINÁMICO ---
-                        mensaje = f"🚨 ALERTA SOS CRÍTICA 🚨 Paciente reporta: {sintoma_reporte}. Requiere asistencia inmediata. A continuación envío mi ubicación en tiempo real:"
-                        mensaje_url = mensaje.replace(" ", "%20")
-                        numero_wsp = st.session_state.contacto_sos.replace("+", "").replace(" ", "")
-                        enlace_wsp = f"https://wa.me/{numero_wsp}?text={mensaje_url}"
+                        # --- EXTRACCIÓN AUTOMÁTICA DE GPS Y ENVÍO A WHATSAPP ---
+                        import streamlit.components.v1 as components
                         
-                        st.markdown(f"""
-                        <a href="{enlace_wsp}" target="_blank" style="text-decoration: none;">
-                            <button style="background-color: #25D366; color: white; border-radius: 8px; font-weight: bold; height: 60px; width: 100%; font-size: 18px; border: 2px solid #128C7E; cursor: pointer; margin-top: 10px;">
-                                💬 ENVIAR ALERTA Y UBICACIÓN A WHATSAPP
-                            </button>
-                        </a>
-                        """, unsafe_allow_html=True)
+                        numero_wsp = st.session_state.contacto_sos.replace("+", "").replace(" ", "")
+                        sintoma_seguro = sintoma_reporte.replace("'", "").replace('"', "")
+                        
+                        codigo_gps = f"""
+                        <script>
+                        function enviarSOS() {{
+                            if (navigator.geolocation) {{
+                                navigator.geolocation.getCurrentPosition(function(position) {{
+                                    var lat = position.coords.latitude;
+                                    var lon = position.coords.longitude;
+                                    var mapa = "https://www.google.com/maps?q=" + lat + "," + lon;
+                                    var mensaje = "🚨 ALERTA SOS CRÍTICA 🚨 Paciente reporta: {sintoma_seguro}. Ubicación exacta GPS: " + mapa;
+                                    var url = "https://wa.me/{numero_wsp}?text=" + encodeURIComponent(mensaje);
+                                    window.open(url, "_blank");
+                                }}, function(error) {{
+                                    alert("⚠️ ATENCIÓN: Por favor, enciende el GPS de tu tablet y permite el acceso a la ubicación en el navegador.");
+                                }});
+                            }} else {{
+                                alert("El dispositivo no soporta funciones de GPS.");
+                            }}
+                        }}
+                        </script>
+                        <button onclick="enviarSOS()" style="background-color: #25D366; color: white; border-radius: 8px; font-weight: bold; height: 60px; width: 100%; font-size: 18px; border: 2px solid #128C7E; cursor: pointer; margin-top: 10px; font-family: sans-serif;">
+                            🛰️ EXTRAER GPS Y ENVIAR ALERTA
+                        </button>
+                        """
+                        components.html(codigo_gps, height=85)
                     else:
                         st.success("💊 **Triaje Exitoso:** Proceda con observación de rutina.")
                 else:
-                    st.warning("Por favor, describa los síntomas.")
-
+                    st.warning("⚠️ Faltan datos: Por favor, describa los síntomas.")
         # --- VISTA: PERFIL Y CONTACTO SOS ---
 elif menu == "Perfil y Contacto SOS":
             st.title("👤 Configuración del Perfil")
