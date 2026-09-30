@@ -379,7 +379,7 @@ elif menu == "Triaje y Alerta SOS":
                     st.warning("⚠️ Faltan datos: Por favor, describa los síntomas.")
 
         # --- VISTA: PERFIL Y CONTACTO SOS ---
-        elif menu == "Perfil y Contacto SOS":
+elif menu == "Perfil y Contacto SOS":
             st.title("👤 Configuración del Perfil")
             
             if "nombre_usuario" not in st.session_state:
