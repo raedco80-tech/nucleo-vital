@@ -179,10 +179,25 @@ elif menu == "Escudo y memoria":
       else:
         semaforo, color_html = "🟩 ZONA SEGURA", "#238636"
 
-      st.markdown(f"### Semáforo en Ruta: <span style='color: {color_html}; font-weight: bold;'>● {semaforo}</span>", unsafe_allow_html=True)
-      if incidente_camino:
-        st.warning(f"📌 Incidente reportado: '{incidente_camino}'")
-      st.progress(80)
+     st.markdown(f"### Semáforo en Ruta: <span style='color: {color_html}; font-weight: bold;'>{semaforo}</span>", unsafe_allow_html=True)
+        st.success(f"📍 Destino fijado: **{destino}**")
+        
+        # --- NUEVO: Conexión directa con el GPS de la tablet ---
+        ruta_gps = destino.replace(" ", "+")
+        enlace_mapa = f"https://www.google.com/maps/dir/?api=1&destination={ruta_gps}"
+        
+        st.markdown(f"""
+        <a href="{enlace_mapa}" target="_blank" style="text-decoration: none;">
+            <button style="background-color: #1f6feb; color: white; border-radius: 8px; font-weight: bold; height: 60px; width: 100%; font-size: 18px; border: 2px solid #388bfd; cursor: pointer; margin-top: 10px; margin-bottom: 10px;">
+                🛰️ INICIAR NAVEGACIÓN GPS (GOOGLE MAPS)
+            </button>
+        </a>
+        """, unsafe_allow_html=True)
+        
+        if incidente_camino:
+            st.warning(f"📌 Incidente reportado en bitácora: '{incidente_camino}'")
+            
+        st.progress(100) 
     else:
       st.warning("Por favor ingrese un destino válido.")
 
