@@ -337,16 +337,22 @@ elif menu == "Triaje y Alerta SOS":
                     if "pecho" in texto or "fuerte" in texto or "descompensación" in texto:
                         st.error("🚨 **¡ALERTA SOS ACTIVADA POR GRAVEDAD CRÍTICA!**")
                         
-                        # --- EXTRACCIÓN AUTOMÁTICA DE GPS Y ENVÍO A WHATSAPP ---
                         import streamlit.components.v1 as components
                         
                         numero_wsp = st.session_state.contacto_sos.replace("+", "").replace(" ", "")
                         sintoma_seguro = sintoma_reporte.replace("'", "").replace('"', "")
                         
+                        # --- EXTRACCIÓN GPS CALIBRADA EN ALTA PRECISIÓN ---
                         codigo_gps = f"""
                         <script>
                         function enviarSOS() {{
                             if (navigator.geolocation) {{
+                                var opcionesGPS = {{
+                                    enableHighAccuracy: true,
+                                    timeout: 15000,
+                                    maximumAge: 0
+                                }};
+                                
                                 navigator.geolocation.getCurrentPosition(function(position) {{
                                     var lat = position.coords.latitude;
                                     var lon = position.coords.longitude;
@@ -355,15 +361,15 @@ elif menu == "Triaje y Alerta SOS":
                                     var url = "https://wa.me/{numero_wsp}?text=" + encodeURIComponent(mensaje);
                                     window.open(url, "_blank");
                                 }}, function(error) {{
-                                    alert("⚠️ ATENCIÓN: Por favor, enciende el GPS de tu tablet y permite el acceso a la ubicación en el navegador.");
-                                }});
+                                    alert("⚠️ El GPS está tardando. Por favor, acércate a una ventana o sal al patio para que la tablet detecte los satélites.");
+                                }}, opcionesGPS);
                             }} else {{
                                 alert("El dispositivo no soporta funciones de GPS.");
                             }}
                         }}
                         </script>
                         <button onclick="enviarSOS()" style="background-color: #25D366; color: white; border-radius: 8px; font-weight: bold; height: 60px; width: 100%; font-size: 18px; border: 2px solid #128C7E; cursor: pointer; margin-top: 10px; font-family: sans-serif;">
-                            🛰️ EXTRAER GPS Y ENVIAR ALERTA
+                            🛰️ EXTRAER GPS EXACTO Y ENVIAR ALERTA
                         </button>
                         """
                         components.html(codigo_gps, height=85)
@@ -371,8 +377,9 @@ elif menu == "Triaje y Alerta SOS":
                         st.success("💊 **Triaje Exitoso:** Proceda con observación de rutina.")
                 else:
                     st.warning("⚠️ Faltan datos: Por favor, describa los síntomas.")
+
         # --- VISTA: PERFIL Y CONTACTO SOS ---
-elif menu == "Perfil y Contacto SOS":
+        elif menu == "Perfil y Contacto SOS":
             st.title("👤 Configuración del Perfil")
             
             if "nombre_usuario" not in st.session_state:
@@ -387,7 +394,6 @@ elif menu == "Perfil y Contacto SOS":
                 st.session_state.nombre_usuario = alias_input
                 st.session_state.contacto_sos = contacto_input
                 st.success("¡Perfil guardado exitosamente!")
-
 # --- VISTA: PANEL MAESTRO ---
 elif menu == "Panel Maestro (Licencias)":
   st.title("⚙️ Panel de Control Maestro")
