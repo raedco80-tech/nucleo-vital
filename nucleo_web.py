@@ -7,6 +7,7 @@ st.set_page_config(
     page_title="Núcleo Vital - Centro de Mando",
     page_icon="🛡️",
     layout="wide",
+    initial_sidebar_state="expanded"
 )
 
 # Estilo táctico / oscuro personalizado
@@ -14,11 +15,11 @@ st.markdown(
     """
     <style>
     .main { background-color: #0e1117; color: #c9d1d9; }
-    .stButton>button { background-color: #238636; color: white; border-radius: 6px; font-weight: bold; }
+    .stButton>button { background-color: #238636; color: white; border-radius: 8px; font-weight: bold; height: 65px !important; font-size: 18px !important; margin-bottom: 5px; border: 2px solid #3fb950; }
     .stTextInput>div>div>input { background-color: #161b22; color: white; border: 1px solid #30363d; }
     .stTextArea>div>div>textarea { background-color: #161b22; color: white; border: 1px solid #30363d; }
     </style>
-""",
+    """,
     unsafe_allow_html=True,
 )
 
