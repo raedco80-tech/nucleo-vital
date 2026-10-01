@@ -397,18 +397,12 @@ elif menu == "Triaje y Alerta SOS":
 elif menu == "Perfil y Contacto SOS":
             st.title("👤 Configuración del Perfil")
             
-            if "nombre_usuario" not in st.session_state:
-                st.session_state.nombre_usuario = "Raúl"
-            if "contacto_sos" not in st.session_state:
-                st.session_state.contacto_sos = "+51 997538121"
-                
-            alias_input = st.text_input("Nombre o Alias:", value=st.session_state.nombre_usuario)
-            contacto_input = st.text_input("Número de Contacto SOS:", value=st.session_state.contacto_sos)
-            
-            if st.button("💾 GUARDAR PERFIL"):
-                st.session_state.nombre_usuario = alias_input
-                st.session_state.contacto_sos = contacto_input
-                st.success("¡Perfil guardado exitosamente!")
+        st.info("🔒 Perfil gestionado por el Administrador central.")
+        nombre_db = st.session_state.get("nombre_usuario", "Usuario")
+        contacto_db = st.session_state.get("contacto_sos", "No registrado")
+        
+        st.text_input("Nombre / Rol (Solo lectura):", value=nombre_db, disabled=True)
+        st.text_input("Número de Contacto SOS:", value=contacto_db, disabled=True)
 # --- VISTA: PANEL MAESTRO ---
 elif menu == "Panel Maestro (Licencias)":
   st.title("⚙️ Panel de Control Maestro")
