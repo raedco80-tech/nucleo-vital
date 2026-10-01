@@ -79,8 +79,7 @@ def verificar_acceso(token, dispositivo):
 
     except Exception as e:
         return False, f"⚠️ Error de enlace satelital con la base maestra."
-  else:
-    return False, "❌ Clave de acceso inválida o no autorizada."
+ 
 
 
 # --- CONTROL DE SESIÓN ESTRICTO ---
