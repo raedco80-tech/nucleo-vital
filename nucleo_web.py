@@ -42,27 +42,43 @@ if "dispositivo" not in st.session_state:
 dispositivo_actual = st.session_state.dispositivo
 
 def verificar_acceso(token, dispositivo):
-  if not token:
-    return False, "Por favor ingrese una clave de acceso."
+    import csv
+    import urllib.request
 
-  if token == CLAVE_MAESTRA:
-    return True, "MASTER"
+    if not token:
+        return False, "Por favor ingrese una clave de acceso."
 
-  if token in st.session_state.licencias_db:
-    fecha_exp_str = st.session_state.licencias_db[token]
-    fecha_exp = datetime.strptime(fecha_exp_str, "%Y-%m-%d").date()
-    hoy = datetime.now().date()
+    if token == CLAVE_MAESTRA:
+        return True, "MASTER"
 
-    if hoy > fecha_exp:
-      return False, f"⚠️ La llave ingresada ha caducado el {fecha_exp_str}."
+    # Conexión global a la bóveda de Google Sheets
+    sheet_id = "1xVHT-PoTz_M7zu8Dlzqi6DGTQ86zow1qeBxNIGzAHJ8"
+    url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv"
 
-    if token in st.session_state.licencias_vinculos:
-      if st.session_state.licencias_vinculos[token] != dispositivo:
-        return False, "❌ Esta llave ya se encuentra en uso en otro equipo."
-    else:
-      st.session_state.licencias_vinculos[token] = dispositivo
+    try:
+        # Descargar y leer la matriz en tiempo real
+        response = urllib.request.urlopen(url)
+        lines = [l.decode('utf-8') for l in response.readlines()]
+        reader = csv.reader(lines)
+        next(reader) # Saltar la cabecera (Usuario, Clave, Estado)
 
-    return True, "USUARIO"
+        # Escanear la base de datos buscando la clave
+        for row in reader:
+            if len(row) >= 3:
+                clave_db = row[1].strip()
+                estado_db = row[2].strip()
+
+                if token == clave_db:
+                    if estado_db.upper() == "ACTIVO":
+                        return True, "USUARIO"
+                    else:
+                        return False, "⚠️ Esta clave ha sido desactivada."
+        
+        # Si termina de buscar y no encuentra nada
+        return False, "❌ Clave incorrecta o no registrada en el sistema."
+
+    except Exception as e:
+        return False, f"⚠️ Error de enlace satelital con la base maestra."
   else:
     return False, "❌ Clave de acceso inválida o no autorizada."
 
