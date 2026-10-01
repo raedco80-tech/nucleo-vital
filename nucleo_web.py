@@ -395,7 +395,7 @@ elif menu == "Triaje y Alerta SOS":
 
         # --- VISTA: PERFIL Y CONTACTO SOS ---
 elif menu == "Perfil y Contacto SOS":
-            st.title("👤 Configuración del Perfil")
+        st.title("👤 Configuración del Perfil")
             
         st.info("🔒 Perfil gestionado por el Administrador central.")
         nombre_db = st.session_state.get("nombre_usuario", "Usuario")
