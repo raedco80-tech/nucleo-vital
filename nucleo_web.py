@@ -56,13 +56,11 @@ def verificar_acceso(token, dispositivo):
     url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv"
 
     try:
-        # Descargar y leer la matriz en tiempo real
         response = urllib.request.urlopen(url)
         lines = [l.decode('utf-8') for l in response.readlines()]
         reader = csv.reader(lines)
-        next(reader) # Saltar la cabecera (Usuario, Clave, Estado)
+        next(reader) # Saltar cabecera
 
-        # Escanear la base de datos buscando la clave
         for row in reader:
             if len(row) >= 3:
                 clave_db = row[1].strip()
@@ -70,11 +68,13 @@ def verificar_acceso(token, dispositivo):
 
                 if token == clave_db:
                     if estado_db.upper() == "ACTIVO":
+                        # AQUÍ EL SISTEMA CAPTURA EL NOMBRE Y EL CONTACTO DE LA HOJA
+                        st.session_state.nombre_usuario = row[0].strip()
+                        st.session_state.contacto_sos = row[3].strip() if len(row) >= 4 else ""
                         return True, "USUARIO"
                     else:
                         return False, "⚠️ Esta clave ha sido desactivada."
         
-        # Si termina de buscar y no encuentra nada
         return False, "❌ Clave incorrecta o no registrada en el sistema."
 
     except Exception as e:
