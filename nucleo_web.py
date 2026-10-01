@@ -48,9 +48,6 @@ def verificar_acceso(token, dispositivo):
     if not token:
         return False, "Por favor ingrese una clave de acceso."
 
-    if token == CLAVE_MAESTRA:
-        return True, "MASTER"
-
     # Conexión global a la bóveda de Google Sheets
     sheet_id = "1xVHT-PoTz_M7zu8Dlzqi6DGTQ86zow1qeBxNIGzAHJ8"
     url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv"
@@ -68,10 +65,15 @@ def verificar_acceso(token, dispositivo):
 
                 if token == clave_db:
                     if estado_db.upper() == "ACTIVO":
-                        # AQUÍ EL SISTEMA CAPTURA EL NOMBRE Y EL CONTACTO DE LA HOJA
+                        # Se descarga el nombre y el contacto SIN IMPORTAR si es admin o usuario
                         st.session_state.nombre_usuario = row[0].strip()
                         st.session_state.contacto_sos = row[3].strip() if len(row) >= 4 else ""
-                        return True, "USUARIO"
+                        
+                        # Verifica si es el admin para darle su panel especial
+                        if token == CLAVE_MAESTRA:
+                            return True, "MASTER"
+                        else:
+                            return True, "USUARIO"
                     else:
                         return False, "⚠️ Esta clave ha sido desactivada."
         
@@ -79,7 +81,6 @@ def verificar_acceso(token, dispositivo):
 
     except Exception as e:
         return False, f"⚠️ Error de enlace satelital con la base maestra."
- 
 
 
 # --- CONTROL DE SESIÓN ESTRICTO ---
