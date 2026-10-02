@@ -342,7 +342,7 @@ elif menu == "Triaje y Alerta SOS":
         import streamlit.components.v1 as components
                         
         numero_wsp = st.session_state.contacto_sos.replace("+", "").replace(" ", "")
-                        sintoma_seguro = sintoma_reporte.replace("'", "").replace('"', "")
+        sintoma_seguro = sintoma_reporte.replace("'", "").replace('"', "")
                         
                         # --- EXTRACCIÓN GPS CALIBRADA EN ALTA PRECISIÓN ---
                         codigo_gps = f"""
