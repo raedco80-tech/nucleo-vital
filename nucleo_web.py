@@ -374,7 +374,7 @@ elif menu == "Triaje y Alerta SOS":
                             🛰️ EXTRAER GPS EXACTO Y ENVIAR ALERTA
                         </button>
                         """
-                        components.html(codigo_gps, height=85)
+        components.html(codigo_gps, height=85)
                     else:
                         st.success("💊 **Triaje Exitoso:** Proceda con observación de rutina.")
                 else:
