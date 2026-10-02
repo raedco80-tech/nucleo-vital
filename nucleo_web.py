@@ -345,14 +345,14 @@ elif menu == "Triaje y Alerta SOS":
         sintoma_seguro = sintoma_reporte.replace("'", "").replace('"', "")
                         
                         # --- EXTRACCIÓN GPS CALIBRADA EN ALTA PRECISIÓN ---
-                        codigo_gps = f"""
-                        <script>
-                        function enviarSOS() {{
-                            if (navigator.geolocation) {{
-                                var opcionesGPS = {{
-                                    enableHighAccuracy: true,
-                                    timeout: 15000,
-                                    maximumAge: 0
+        codigo_gps = f"""
+        <script>
+        function enviarSOS() {{
+        if (navigator.geolocation) {{
+        var opcionesGPS = {{
+        enableHighAccuracy: true,
+        timeout: 15000,
+        maximumAge: 0
                                 }};
                                 
                                 navigator.geolocation.getCurrentPosition(function(position) {{
