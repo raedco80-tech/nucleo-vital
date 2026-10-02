@@ -375,10 +375,7 @@ elif menu == "Triaje y Alerta SOS":
                         </button>
                         """
         components.html(codigo_gps, height=85)
-        else:
-        st.success("💊 **Triaje Exitoso:** Proceda con observación de rutina.")
-        else:
-        st.warning("⚠️ Faltan datos: Por favor, describa los síntomas.")
+        
 
         # --- VISTA: PERFIL Y CONTACTO SOS ---
 elif menu == "Perfil y Contacto SOS":
