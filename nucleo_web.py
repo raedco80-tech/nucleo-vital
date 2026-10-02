@@ -216,7 +216,7 @@ if st.button("Consultar Estado y Generar Ruta"):
             else:
                 st.warning("Por favor ingrese un destino válido.")
 # --- VISTA: ESCÁNER TÁCTICO PRO ---
-    elif menu == "Escáner Táctico Pro":
+elif menu == "Escáner Táctico Pro":
         st.title("🔎 Escáner Táctico Pro")
         st.write("Analice alimentos, bebidas o productos de cuidado personal.")
 
