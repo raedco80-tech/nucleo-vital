@@ -277,19 +277,67 @@ elif menu == "Escáner táctico Pro":
             else:
                 st.warning("Por favor ingrese un producto para iniciar el escaneo.")
 elif menu == "Triaje y Alerta SOS":
-            st.title("🚨 Triaje y Alerta SOS")
-            
-            if "contacto_sos" not in st.session_state:
-                st.session_state.contacto_sos = "+51 900000000"
+        st.title("🚨 Triaje y Alerta SOS")
+
+        if "contacto_sos" not in st.session_state:
+            st.session_state.contacto_sos = "+51 900000000"
+
+        st.write("Ingrese el malestar o accidente para recibir asistencia médica inmediata:")
+        
+        sintoma_reporte = st.text_input("Describa el síntoma (ej. fiebre alta, dolor de cabeza, corte):")
+
+        if st.button("⚡ Ejecutar Triaje Clínico"):
+            if sintoma_reporte:
+                termino = sintoma_reporte.lower().strip()
                 
-            modo_entrada = st.radio("Método de reporte:", ["Escribir síntoma", "Dictar Comando de Voz"])
-            sintoma_reporte = st.text_area("Describa síntomas:" if modo_entrada == "Escribir síntoma" else "Transcripción de voz...")
-            
-            if st.button("⚡ Ejecutar Triaje Clínico"):
-                if sintoma_reporte:
-                    texto = sintoma_reporte.lower()
-                    if "pecho" in texto or "fuerte" in texto or "descompensación" in texto:
-                        st.error("🚨 **¡ALERTA SOS ACTIVADA POR GRAVEDAD CRÍTICA!**")
+                sheet_id = "1xVHT-PoTz_M7zu8Dlzqi6DGTQ86zow1qeBxNIGzAHJ8"
+                gid_triaje = "1008699611" 
+                url_triaje = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv&gid={gid_triaje}"
+                
+                encontrado = False
+                try:
+                    import urllib.request
+                    import csv
+                    response = urllib.request.urlopen(url_triaje)
+                    lines = [l.decode('utf-8') for l in response.readlines()]
+                    reader = csv.reader(lines)
+                    next(reader) # Saltar la cabecera
+
+                    for row in reader:
+                        if len(row) >= 5:
+                            sintoma_db = row[0].strip()
+                            if termino in sintoma_db.lower():
+                                encontrado = True
+                                gravedad = row[1].strip().upper()
+                                primeros_aux = row[2].strip()
+                                medicina = row[3].strip()
+                                alerta_sos = row[4].strip().upper()
+
+                                st.subheader(f"🩺 Evaluación para: {sintoma_db}")
+                                
+                                if "GRAVE" in gravedad:
+                                    st.error(f"⚠️ **NIVEL DE GRAVEDAD:** {gravedad}")
+                                elif "MODERADO" in gravedad:
+                                    st.warning(f"🟡 **NIVEL DE GRAVEDAD:** {gravedad}")
+                                else:
+                                    st.success(f"🟢 **NIVEL DE GRAVEDAD:** {gravedad}")
+                                
+                                st.info(f"**🛠️ Instrucciones de Primeros Auxilios:** {primeros_aux}")
+                                st.write(f"**💊 Medicina Básica Sugerida:** {medicina}")
+                                
+                                if alerta_sos == "SI":
+                                    st.error("🚨 **ACCIÓN CRÍTICA REQUERIDA:** Riesgo alto detectado. Por favor, desplácese hacia abajo y active la Alerta SOS de inmediato.")
+                                break
+
+                    if not encontrado:
+                        st.warning("⚠️ Síntoma no registrado con exactitud. Si considera que es una emergencia real, active el SOS en la parte inferior.")
+
+                except Exception as e:
+                    st.error("⚠️ Error de enlace con la base médica de Triaje.")
+            else:
+                st.warning("Por favor ingrese un síntoma para analizar.")
+                
+        st.markdown("---")
                         
                         import streamlit.components.v1 as components
                         
